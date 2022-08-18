@@ -50,7 +50,7 @@ const validate = (req, res, next) => {
           )
         )
         .empty(""),
-      userListItem: Joi.object(),
+      userListItem: Joi.string(),
     });
 
     Joi.attempt(req.body, schema);

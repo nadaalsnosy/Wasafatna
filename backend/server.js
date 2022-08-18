@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-// const userRouter = require("./Modules/Users/UserRoutes");
+const userRouter = require("./Modules/Users/UserRoutes");
 // const movieRouter = require("./Modules/Movies/MovieRoutes");
 
 const port = 8000;
@@ -29,7 +29,7 @@ app.use(function (req, res, next) {
   next();
 });
 
-// app.use("/api/users", userRouter);
+app.use("/api/users", userRouter);
 // app.use("/api/movies", movieRouter);
 
 mongoose.connect("mongodb://localhost:27017/wasafatna", (err) => {

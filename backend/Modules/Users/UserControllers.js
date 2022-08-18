@@ -24,10 +24,16 @@ const login = async (req, res, next) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    if (!user) throw new Error("invalid email or password");
+    if (!user) {
+      throw new Error("invalid email or password");
+    }
+
     const { password: originalHashedPassword } = user;
     const result = await bcrypt.compare(password, originalHashedPassword);
-    if (!result) throw new Error("invalid email or password");
+    if (!result) {
+      throw new Error("invalid email or password");
+    }
+
     const { id: uID } = user;
     const token = await asynSign(
       { id: uID, isAdmin: user.isAdmin },
