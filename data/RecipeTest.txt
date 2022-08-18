@@ -1,0 +1,10 @@
+
+{
+        "title": "",
+        "rate": "",
+        "img": "",
+        "ingredients": "",
+        "preparing": "",
+        "video": "",
+        "genere": "",
+      }

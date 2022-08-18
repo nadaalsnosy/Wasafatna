@@ -5,9 +5,9 @@ const cors = require("cors");
 require("dotenv").config();
 
 const userRouter = require("./Modules/Users/UserRoutes");
-// const movieRouter = require("./Modules/Movies/MovieRoutes");
+const recipeRouter = require("./Modules/Recipes/RecipeRoutes");
 
-const port = 8000;
+const port = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 
@@ -30,14 +30,14 @@ app.use(function (req, res, next) {
 });
 
 app.use("/api/users", userRouter);
-// app.use("/api/movies", movieRouter);
+app.use("/api/recipes", recipeRouter);
 
-mongoose.connect("mongodb://localhost:27017/wasafatna", (err) => {
+mongoose.connect(process.env.DB, (err) => {
   if (err) process.exit(1);
   console.log("connected to database successfully");
 });
 app.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+  console.log(`Server listening on your port`);
 });
 
 app.use((err, req, res, next) => {
