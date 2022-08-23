@@ -8,8 +8,8 @@ const RecipeSchema = new Schema({
   rate: {
     type: Number,
   },
-  img: {
-    type: String,
+  recipesImgs: {
+    type: Array,
   },
   ingredients: {
     type: String,
@@ -17,21 +17,30 @@ const RecipeSchema = new Schema({
   preparing: {
     type: String,
   },
-  video: {
-    type: String,
+  recipesVideos: {
+    type: Array,
   },
   createdAt: {
     type: Date,
-    default: new Date
+    default: new Date(),
   },
   genre: {
     type: String,
-    enum: ["desserts", "juices", "meals", "salad", "breakfast", "pastries"],
+    enum: [
+      "desserts",
+      "juices",
+      "meals",
+      "salad",
+      "breakfast",
+      "pastries",
+      "others",
+    ],
+    default: "others",
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  }
+    ref: "User",
+  },
 });
 
 module.exports = { RecipeSchema };

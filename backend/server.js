@@ -29,8 +29,10 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use("/api/users", userRouter);
-app.use("/api/recipes", recipeRouter);
+app.use("/users", userRouter);
+app.use("/recipes", recipeRouter);
+app.use("/uploads", express.static('uploads'));
+
 
 mongoose.connect(process.env.DB, (err) => {
   if (err) process.exit(1);

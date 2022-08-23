@@ -1,4 +1,5 @@
 const Recipe = require("./RecipeModel");
+const fs = require("fs");
 
 const getAll = async (req, res, next) => {
   try {
@@ -41,30 +42,35 @@ const addNew = async (req, res, next) => {
     const { id } = req.params;
 
     if (req.userPayload.id === id) {
-      const {
-        title,
-        rate,
-        img,
-        ingredients,
-        preparing,
-        video,
-        createdAt,
-        genre,
-      } = req.body;
+      const { title, rate, ingredients, preparing, createdAt, genre } =
+        req.body;
+
+      let recipesVideos = [];
+      let recipesImgs = [];
+
+      if (req.files) {
+        req.files.forEach((item) => {
+          if (item.mimetype === "video/mp4") {
+            recipesVideos.push(item.path);
+          } else {
+            recipesImgs.push(item.path);
+          }
+        });
+      }
 
       const newRecipe = new Recipe({
         title,
         rate,
-        img,
+        recipesImgs,
         ingredients,
         preparing,
-        video,
+        recipesVideos,
         createdAt,
         genre,
         createdBy: req.userPayload.id,
       });
-      const createdRecipe = await newRecipe.save();
 
+      const createdRecipe = await newRecipe.save();
       res.send(createdRecipe);
     } else {
       throw new Error(`You are not allowed to add Recipes Here`);
@@ -81,17 +87,39 @@ const updateOne = async (req, res, next) => {
     const recipe = await Recipe.findById(id);
 
     if (req.userPayload.id === recipe.createdBy.toString()) {
-      const { title, rate, img, ingredients, preparing, video, genre } =
+      const { title, rate, ingredients, preparing, genre, deleteImgs } =
         req.body;
+
+      if (req.files.length !== 0) {
+        req.files.forEach((item) => {
+          if (item.mimetype === "video/mp4") {
+            recipe.recipesVideos.push(item.path);
+          } else {
+            recipe.recipesImgs.push(item.path);
+          }
+        });
+      }
+
+      if (deleteImgs) {
+        deleteImgs.forEach((imgPath) => {
+          recipe.recipesImgs.forEach((item, index) => {
+            if (item === imgPath) {
+              fs.unlinkSync(item);
+              recipe.recipesImgs.splice(index, 1);
+            }
+          });
+        });
+      }
+
       const updatedRecipes = await Recipe.findByIdAndUpdate(
         id,
         {
           title,
           rate,
-          img,
+          recipesImgs: recipe.recipesImgs,
           ingredients,
           preparing,
-          video,
+          recipesVideos: recipe.recipesVideos,
           genre,
         },
         { new: true }
@@ -115,6 +143,18 @@ const deleteOne = async (req, res, next) => {
       req.userPayload.id === recipe.createdBy.toString() ||
       req.userPayload.isAdmin
     ) {
+      if (recipe.recipesImgs.length !== 0) {
+        recipe.recipesImgs.forEach((item) => {
+          fs.unlinkSync(item);
+        });
+      }
+
+      if (recipe.recipesVideos.length !== 0) {
+        recipe.recipesVideos.forEach((item) => {
+          fs.unlinkSync(item);
+        });
+      }
+
       const deletedRecipe = await Recipe.findByIdAndDelete(id);
       res.send(`${deletedRecipe.title} is deleted successfully`);
     } else {

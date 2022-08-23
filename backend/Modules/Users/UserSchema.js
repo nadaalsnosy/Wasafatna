@@ -24,8 +24,9 @@ const userSchema = new Schema({
       "password must be of Minimum eight characters, contain at least 1 lowercase, 1 uppercase, one number and one special characher",
     ],
   },
-  image: {
+  userImg: {
     type: String,
+    default: "uploads\\usersImage\\userIcon.png"
   },
   userList: {
     type: Array,

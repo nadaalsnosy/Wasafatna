@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
+
 const util = require("util");
 const User = require("./UserModel");
 
@@ -10,7 +12,7 @@ const signUp = async (req, res, next) => {
   try {
     const newUser = new User({ username, email, password });
     if (req.file) {
-      newUser.image = req.file.path;
+      newUser.userImg = req.file.path;
     }
     const createdUser = await newUser.save();
     res.send(createdUser);
@@ -82,7 +84,7 @@ const updateUser = async (req, res, next) => {
     const { username, email, password, userListItem } = req.body;
 
     if (req.userPayload.id === id || req.userPayload.isAdmin) {
-      let { userList } = await User.findById(id);
+      let { userList, userImg } = await User.findById(id);
 
       if (userListItem) {
         const exists = userList.some((item) => item._id === userListItem._id);
@@ -91,9 +93,23 @@ const updateUser = async (req, res, next) => {
           : [...userList, userListItem];
       }
 
+      if (req.file) {
+        if (
+          req.file.mimetype === "image/jpeg" ||
+          req.file.mimetype === "image/png"
+        ) {
+          if (userImg) {
+            fs.unlinkSync(userImg);
+          }
+          userImg = req.file.path;
+        } else {
+          throw new Error(`You must add jpeg or png only!`);
+        }
+      }
+
       const updatedUsers = await User.findByIdAndUpdate(
         id,
-        { username, email, password, userList },
+        { username, email, password, userList, userImg },
         { new: true }
       );
       res.send(updatedUsers);

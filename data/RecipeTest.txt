@@ -1,10 +1,9 @@
 
 {
-        "title": "",
-        "rate": "",
-        "img": "",
-        "ingredients": "",
-        "preparing": "",
-        "video": "",
-        "genere": "",
+        "title": "dfsdfds",
+        "rate": "3",
+        "ingredients": "sdfsdfsdf",
+        "preparing": "fdsfdsfsdf",
+        "genere": "salad",
       }
+
