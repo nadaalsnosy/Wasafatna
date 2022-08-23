@@ -1,10 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
-
 const util = require("util");
 const User = require("./UserModel");
-
 const asynSign = util.promisify(jwt.sign);
 
 const signUp = async (req, res, next) => {
@@ -125,7 +123,12 @@ const updateUser = async (req, res, next) => {
 const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const { userImg } = await User.findById(id);
+
     if (req.userPayload.id === id || req.userPayload.isAdmin) {
+      if (userImg !== "images\\userIcon.png") {
+        fs.unlinkSync(userImg);
+      }
       const deletedUser = await User.findByIdAndDelete(id);
       res.send(`${deletedUser.username} is deleted successfully`);
     } else {
@@ -136,4 +139,5 @@ const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
 module.exports = { signUp, login, getUsers, profile, updateUser, deleteUser };

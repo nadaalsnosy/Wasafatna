@@ -137,20 +137,20 @@ const updateOne = async (req, res, next) => {
 const deleteOne = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const recipe = await Recipe.findById(id);
+    const { recipesImgs, createdBy, recipesVideos } = await Recipe.findById(id);
 
     if (
-      req.userPayload.id === recipe.createdBy.toString() ||
+      req.userPayload.id === createdBy.toString() ||
       req.userPayload.isAdmin
     ) {
-      if (recipe.recipesImgs.length !== 0) {
-        recipe.recipesImgs.forEach((item) => {
+      if (recipesImgs.length !== 0) {
+        recipesImgs.forEach((item) => {
           fs.unlinkSync(item);
         });
       }
 
-      if (recipe.recipesVideos.length !== 0) {
-        recipe.recipesVideos.forEach((item) => {
+      if (recipesVideos.length !== 0) {
+        recipesVideos.forEach((item) => {
           fs.unlinkSync(item);
         });
       }
