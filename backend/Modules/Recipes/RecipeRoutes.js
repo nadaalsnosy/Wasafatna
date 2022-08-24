@@ -8,11 +8,14 @@ const {
   deleteOne,
   getOne,
   getAll,
+  getUserRecipes,
 } = require("./RecipeControllers");
 
 //get
 recipeRouter.get("/", verifyToken, getAll);
 recipeRouter.get("/:id", verifyToken, getOne);
+recipeRouter.get("/user/:id", verifyToken, getUserRecipes);
+
 //
 recipeRouter.post(
   "/:id",

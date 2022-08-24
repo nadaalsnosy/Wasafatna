@@ -1,4 +1,6 @@
 const Recipe = require("./RecipeModel");
+const User = require("../Users/UserModel");
+
 const fs = require("fs");
 
 const getAll = async (req, res, next) => {
@@ -16,7 +18,7 @@ const getAll = async (req, res, next) => {
 
     if (genre) {
       const recipes = await Recipe.find({
-        $and: [{ title: { $regex: search } }, { genre: { $regex: genre } }],
+        $and: [{ title: { $regex: search } }, { genre: genre }],
       })
         .limit(limit)
         .skip(page * limit)
@@ -31,6 +33,29 @@ const getAll = async (req, res, next) => {
         .sort(sortBy);
       res.send(recipes);
     }
+  } catch (error) {
+    error.statusCode = 403;
+    next(error);
+  }
+};
+
+const getUserRecipes = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 5;
+    const order = parseInt(req.query.order) || -1;
+    const sort = req.query.sort || "createdAt";
+
+    let sortBy = {};
+    sortBy[sort] = order;
+
+    const userRecipes = await Recipe.find({ createdBy: id })
+      .limit(limit)
+      .skip(page * limit)
+      .sort(sortBy);
+
+    res.send(userRecipes);
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -90,7 +115,7 @@ const updateOne = async (req, res, next) => {
       const { title, rate, ingredients, preparing, genre, deleteImgs } =
         req.body;
 
-      if (req.files.length !== 0) {
+      if (req.files?.length) {
         req.files.forEach((item) => {
           if (item.mimetype === "video/mp4") {
             recipe.recipesVideos.push(item.path);
@@ -177,4 +202,4 @@ const getOne = async (req, res, next) => {
   }
 };
 
-module.exports = { addNew, updateOne, deleteOne, getOne, getAll };
+module.exports = { addNew, updateOne, deleteOne, getOne, getAll, getUserRecipes };
