@@ -1,0 +1,19 @@
+.footerIcons {
+  color: #28a745;
+  font-size: 40px;
+  margin: 20px;
+  &:hover {
+    color: #ff0000;
+  }
+}
+
+.footerLight {
+  background: #ffc1076f;
+  height: 200px;
+  flex-direction: column;
+}
+
+
+.grayBoderTop {
+  border-top: 8px solid #ffc10744;
+}

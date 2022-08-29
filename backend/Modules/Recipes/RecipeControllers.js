@@ -67,7 +67,7 @@ const addNew = async (req, res, next) => {
     const { id } = req.params;
 
     if (req.userPayload.id === id) {
-      const { title, rate, ingredients, preparing, createdAt, genre } =
+      const { title, rate, ingredients, instructions, createdAt, genre } =
         req.body;
 
       let recipesVideos = [];
@@ -88,7 +88,7 @@ const addNew = async (req, res, next) => {
         rate,
         recipesImgs,
         ingredients,
-        preparing,
+        instructions,
         recipesVideos,
         createdAt,
         genre,
@@ -112,7 +112,7 @@ const updateOne = async (req, res, next) => {
     const recipe = await Recipe.findById(id);
 
     if (req.userPayload.id === recipe.createdBy.toString()) {
-      const { title, rate, ingredients, preparing, genre, deleteImgs } =
+      const { title, rate, ingredients, instructions, genre, deleteImgs } =
         req.body;
 
       if (req.files?.length) {
@@ -143,7 +143,7 @@ const updateOne = async (req, res, next) => {
           rate,
           recipesImgs: recipe.recipesImgs,
           ingredients,
-          preparing,
+          instructions,
           recipesVideos: recipe.recipesVideos,
           genre,
         },

@@ -14,7 +14,7 @@ const RecipeSchema = new Schema({
   ingredients: {
     type: String,
   },
-  preparing: {
+  instructions: {
     type: String,
   },
   recipesVideos: {

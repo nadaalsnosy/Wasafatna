@@ -1,0 +1,41 @@
+// .text-danger : color: #dc3545!important;
+// .text-warning : color: #ffc107!important;
+// .text-success : color: #28a745!important;
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+// common things
+.centeringBody {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.shown {
+  visibility: visible !important;
+}
+.hidden {
+  visibility: hidden !important;
+}
+
+.none {
+  display: none !important;
+}
+.block {
+  display: block !important;
+}
+
+// font size
+.fs-35 {
+  font-size: 35px;
+}
+
+// text color
+
+// background color
+.bg-light-warning {
+  background: #ffc1076f;
+}

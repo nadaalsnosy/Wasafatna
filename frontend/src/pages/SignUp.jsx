@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
-import NetflixLogo from "../components/LoggedOut/NetflixLogo";
+import IconsSlider from "../components/IconsSlider";
 
 const userREGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,20}$/;
 const emailREGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
@@ -94,158 +94,147 @@ const SignUp = () => {
   return (
     <>
       <div className="login-container">
-        <div className="overlay">
-          <NetflixLogo />
-          <div className="pb-4">
-            <div>
-              <Form
-                className="signForm text-white bg-black-8"
-                onSubmit={handelSubmit}
-              >
-                <h1 className=" mb-5 fw-bold ">Sign Up</h1>
-                <Form.Group className="mb-4" controlId="formGridName">
-                  <Form.Control
-                    className={`bg-gray h-50p border-0 ${
-                      nameFocus && !validName ? "errInput" : ""
-                    } `}
-                    type="text"
-                    placeholder="Enter name"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    required
-                    aria-describedby="userName"
-                    onFocus={() => setNameFocus(true)}
-                  />
-                  <p
-                    id="userName"
-                    className={`errMsg ${
-                      nameFocus && !validName ? "shown" : "hidden"
-                    }`}
-                  >
-                    please enter valid name!
-                  </p>
-                </Form.Group>
+        <IconsSlider />
 
-                <Form.Group className="mb-4" controlId="formGridEmail">
-                  <Form.Control
-                    className={`bg-gray h-50p border-0 ${
-                      (emailFocus && !validEmail) || errMsg ? "errInput" : ""
-                    }`}
-                    type="email"
-                    placeholder="Enter Email"
-                    value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    required
-                    aria-invalid={validEmail ? false : true}
-                    aria-describedby="userEmail"
-                    onFocus={() => setEmailFocus(true)}
-                  />
-                  <p
-                    id="userEmail"
-                    className={`errMsg ${
-                      emailFocus && !validEmail ? "shown" : "hidden"
-                    } ${errMsg ? "none" : "block"}`}
-                  >
-                    please enter valid email!
-                  </p>
-                  <p
-                    ref={errRef}
-                    className={`errMsg ${errMsg ? "shown" : "hidden"} ${
-                      emailFocus && !validEmail ? "none" : "block"
-                    }`}
-                    aria-live="assertive"
-                  >
-                    {errMsg}
-                  </p>
-                </Form.Group>
+        <Form className="signForm my-5" onSubmit={handelSubmit}>
+          <h1 className=" mb-5 fw-bold text-center fs-35 text-success ">
+            Sign Up
+          </h1>
+          <Form.Group className="mb-4" controlId="formGridName">
+            <Form.Control
+              className={` ${
+                nameFocus && !validName ? "errInput" : "passInput"
+              } `}
+              type="text"
+              placeholder="Enter name"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              required
+              aria-describedby="userName"
+              onFocus={() => setNameFocus(true)}
+            />
+            <p
+              id="userName"
+              className={`errMsg ${
+                nameFocus && !validName ? "shown" : "hidden"
+              }`}
+            >
+              please enter valid name!
+            </p>
+          </Form.Group>
 
-                <Form.Group className="mb-4" controlId="formGridPassword">
-                  <Form.Control
-                    className={`bg-gray h-50p border-0 ${
-                      passwordFocus && !validPassword ? "errInput" : ""
-                    }`}
-                    type="password"
-                    placeholder="Enter Password"
-                    value={userPassword}
-                    onChange={(e) => setUserPassword(e.target.value)}
-                    required
-                    aria-describedby="userPassword"
-                    onFocus={() => setPasswordFocus(true)}
-                  />
-                  <p
-                    id="userPassword"
-                    className={`errMsg ${
-                      passwordFocus && !validPassword ? "shown" : "hidden"
-                    }`}
-                  >
-                    please enter valid password!
-                  </p>
-                </Form.Group>
+          <Form.Group className="mb-4" controlId="formGridEmail">
+            <Form.Control
+              className={`${
+                (emailFocus && !validEmail) || errMsg ? "errInput" : "passInput"
+              }`}
+              type="email"
+              placeholder="Enter Email"
+              value={userEmail}
+              onChange={(e) => setUserEmail(e.target.value)}
+              required
+              aria-invalid={validEmail ? false : true}
+              aria-describedby="userEmail"
+              onFocus={() => setEmailFocus(true)}
+            />
+            <p
+              id="userEmail"
+              className={`errMsg ${
+                emailFocus && !validEmail ? "shown" : "hidden"
+              } ${errMsg ? "none" : "block"}`}
+            >
+              please enter valid email!
+            </p>
+            <p
+              ref={errRef}
+              className={`errMsg ${errMsg ? "shown" : "hidden"} ${
+                emailFocus && !validEmail ? "none" : "block"
+              }`}
+              aria-live="assertive"
+            >
+              {errMsg}
+            </p>
+          </Form.Group>
 
-                <Form.Group
-                  className="mb-4"
-                  controlId="formGridConfirmPassword"
-                >
-                  <Form.Control
-                    className={`bg-gray h-50p border-0 ${
-                      confirmPasswordFocus && !validConfirmPassword
-                        ? "errInput"
-                        : ""
-                    }`}
-                    type="password"
-                    placeholder="Enter ConfirmPassword"
-                    value={userConfirmPassword}
-                    onChange={(e) => setUserConfirmPassword(e.target.value)}
-                    required
-                    aria-describedby="userConfirmPassword"
-                    onFocus={() => setConfirmPasswordFocus(true)}
-                  />
-                  <p
-                    id="userConfirmPassword"
-                    className={`errMsg ${
-                      confirmPasswordFocus && !validConfirmPassword
-                        ? "shown"
-                        : "hidden"
-                    }`}
-                  >
-                    Must match your password input!
-                  </p>
-                </Form.Group>
+          <Form.Group className="mb-4" controlId="formGridPassword">
+            <Form.Control
+              className={`${
+                passwordFocus && !validPassword ? "errInput" : "passInput"
+              }`}
+              type="password"
+              placeholder="Enter Password"
+              value={userPassword}
+              onChange={(e) => setUserPassword(e.target.value)}
+              required
+              aria-describedby="userPassword"
+              onFocus={() => setPasswordFocus(true)}
+            />
+            <p
+              id="userPassword"
+              className={`errMsg ${
+                passwordFocus && !validPassword ? "shown" : "hidden"
+              }`}
+            >
+              please enter valid password!
+            </p>
+          </Form.Group>
 
-                <div className="text-end mt-5">
-                  <Button
-                    variant="danger w-100 h-50p fs-5"
-                    type="submit"
-                    disabled={
-                      !validName ||
-                      !validEmail ||
-                      !validPassword ||
-                      !validConfirmPassword
-                        ? true
-                        : false
-                    }
-                  >
-                    sign up
-                  </Button>
-                </div>
+          <Form.Group className="mb-4" controlId="formGridConfirmPassword">
+            <Form.Control
+              className={`${
+                confirmPasswordFocus &&
+                (!validConfirmPassword || userConfirmPassword === "")
+                  ? "errInput"
+                  : "passInput"
+              }`}
+              type="password"
+              placeholder="Enter ConfirmPassword"
+              value={userConfirmPassword}
+              onChange={(e) => setUserConfirmPassword(e.target.value)}
+              required
+              aria-describedby="userConfirmPassword"
+              onFocus={() => setConfirmPasswordFocus(true)}
+            />
+            <p
+              id="userConfirmPassword"
+              className={`errMsg ${
+                confirmPasswordFocus &&
+                (!validConfirmPassword || userConfirmPassword === "")
+                  ? "shown"
+                  : "hidden"
+              }`}
+            >
+              Must match your password input!
+            </p>
+          </Form.Group>
 
-                <div className="mt-5">
-                  Already have an account?{" "}
-                  <Link
-                    className="text-primary text-decoration-none"
-                    to={`/signIn`}
-                  >
-                    Sign In.
-                  </Link>
-                </div>
-              </Form>
-            </div>
+          <div className="mt-5">
+            <Button
+              variant="success w-100 fs-5"
+              type="submit"
+              disabled={
+                !validName ||
+                !validEmail ||
+                !validPassword ||
+                !validConfirmPassword
+                  ? true
+                  : false
+              }
+            >
+              sign up
+            </Button>
           </div>
-        </div>
+
+          <div className="mt-5">
+            Already have an account?{" "}
+            <Link className="text-primary text-decoration-none" to={`/signIn`}>
+              Sign In.
+            </Link>
+          </div>
+        </Form>
       </div>
     </>
   );
-
 };
 
 export default SignUp;
