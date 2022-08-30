@@ -12,9 +12,9 @@ const {
 } = require("./RecipeControllers");
 
 //get
-recipeRouter.get("/", verifyToken, getAll);
-recipeRouter.get("/:id", verifyToken, getOne);
-recipeRouter.get("/user/:id", verifyToken, getUserRecipes);
+recipeRouter.get("/", getAll);
+recipeRouter.get("/:id", getOne);
+recipeRouter.get("/user/:id", getUserRecipes);
 
 //
 recipeRouter.post(
