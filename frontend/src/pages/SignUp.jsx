@@ -1,17 +1,16 @@
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect} from "react";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
-import IconsSlider from "../components/IconsSlider";
 
 const userREGEX = /^[a-zA-Z][a-zA-Z0-9-_]{3,20}$/;
 const emailREGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
 const passwordREGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/;
 
 const SignUp = () => {
-  const errRef = useRef();
+  // const errRef = useRef();
   const navigate = useNavigate();
   const { auth } = useAuth();
 
@@ -94,10 +93,9 @@ const SignUp = () => {
   return (
     <>
       <div className="login-container">
-        <IconsSlider />
 
         <Form className="signForm my-5" onSubmit={handelSubmit}>
-          <h1 className=" mb-5 fw-bold text-center fs-35 text-success ">
+          <h1 className="mb-5 fw-bold text-center fs-35 text-success">
             Sign Up
           </h1>
           <Form.Group className="mb-4" controlId="formGridName">
@@ -145,7 +143,7 @@ const SignUp = () => {
             >
               please enter valid email!
             </p>
-            <p
+            {/* <p
               ref={errRef}
               className={`errMsg ${errMsg ? "shown" : "hidden"} ${
                 emailFocus && !validEmail ? "none" : "block"
@@ -153,7 +151,7 @@ const SignUp = () => {
               aria-live="assertive"
             >
               {errMsg}
-            </p>
+            </p> */}
           </Form.Group>
 
           <Form.Group className="mb-4" controlId="formGridPassword">

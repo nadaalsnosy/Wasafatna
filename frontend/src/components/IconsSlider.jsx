@@ -39,7 +39,7 @@ const IconsSlider = () => {
           let imgs = [];
           for (let i = 1; i <= 45; i++) {
             imgs.push(
-              <img className="h-100 sliderImg" src={require(`../images/img${i}.png`)} alt="img1" />
+              <img key={`img${i}Id`} className="h-100 sliderImg" src={require(`../images/img${i}.png`)} alt="img1" />
             );
           }
           return imgs;
