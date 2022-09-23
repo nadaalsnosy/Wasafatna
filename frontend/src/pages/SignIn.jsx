@@ -1,9 +1,11 @@
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+import Logo from "../images/wasafatna.png";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -59,10 +61,18 @@ const SignIn = () => {
 
   return (
     <>
-      <div className="login-container">
+      <motion.div
+        className="login-container"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0, transition: { duration: 1 } }}
+      >
         <Form className="signForm my-5" onSubmit={handelSubmit}>
           <h1 className="mb-5 fw-bold text-center fs-35 text-success">
-            Sign In
+            <Link to={`/`}>
+              <img className="LogoLogin" src={Logo} alt="wasafatnaLogo" />
+            </Link>
+            <div>Sign In</div>
           </h1>
 
           <Form.Group className="mb-4" controlId="formGridEmail">
@@ -97,6 +107,7 @@ const SignIn = () => {
               Invalid Email or Password
             </p>
           </Form.Group>
+
           <div className="text-end my-5">
             <Button variant="success w-100 fs-5" type="submit">
               sign in
@@ -104,13 +115,15 @@ const SignIn = () => {
           </div>
           <div className="mt-5">
             New to WasaFatna?{" "}
-            <Link className="text-primary text-decoration-none" to={`/signUp`}>
+            <Link
+              className="text-primary text-decoration-none"
+              to={`/api/signUp`}
+            >
               Sign Up Now.
             </Link>
           </div>
         </Form>
-      </div>
-      ;
+      </motion.div>
     </>
   );
 };

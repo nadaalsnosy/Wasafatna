@@ -1,6 +1,7 @@
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -92,8 +93,12 @@ const SignUp = () => {
   };
   return (
     <>
-      <div className="login-container">
-
+      <motion.div
+        className="login-container"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0, transition: { duration: 1 } }}
+      >
         <Form className="signForm my-5" onSubmit={handelSubmit}>
           <h1 className="mb-5 fw-bold text-center fs-35 text-success">
             Sign Up
@@ -225,12 +230,15 @@ const SignUp = () => {
 
           <div className="mt-5">
             Already have an account?{" "}
-            <Link className="text-primary text-decoration-none" to={`/signIn`}>
+            <Link
+              className="text-primary text-decoration-none"
+              to={`/api/signIn`}
+            >
               Sign In.
             </Link>
           </div>
         </Form>
-      </div>
+      </motion.div>
     </>
   );
 };

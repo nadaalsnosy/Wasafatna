@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthProvider";
 import RequireAuth from "./Auth/RequireAuth";
 import RequireLoggedAut from "./Auth/RequireLoggedAut";
 
+import { AnimatePresence } from "framer-motion";
 import Footer from "./components/Footer";
 
 // import SignUp from "./pages/SignUp";
