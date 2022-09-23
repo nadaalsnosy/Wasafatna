@@ -1,7 +1,9 @@
 import { Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+
+import Logo from "../images/wasafatna.png";
+import AnimatedPage from "../components/AnimatedPage";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -93,16 +95,15 @@ const SignUp = () => {
   };
   return (
     <>
-      <motion.div
-        className="login-container"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0, transition: { duration: 1 } }}
-      >
+      <AnimatedPage>
         <Form className="signForm my-5" onSubmit={handelSubmit}>
           <h1 className="mb-5 fw-bold text-center fs-35 text-success">
-            Sign Up
+            <Link to={`/`}>
+              <img className="LogoLogin" src={Logo} alt="wasafatnaLogo" />
+            </Link>
+            <div>Sign Up</div>
           </h1>
+
           <Form.Group className="mb-4" controlId="formGridName">
             <Form.Control
               className={` ${
@@ -230,15 +231,12 @@ const SignUp = () => {
 
           <div className="mt-5">
             Already have an account?{" "}
-            <Link
-              className="text-primary text-decoration-none"
-              to={`/api/signIn`}
-            >
+            <Link className="text-primary text-decoration-none" to={`/signIn`}>
               Sign In.
             </Link>
           </div>
         </Form>
-      </motion.div>
+      </AnimatedPage>
     </>
   );
 };

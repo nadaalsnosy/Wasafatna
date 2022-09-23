@@ -12,7 +12,7 @@ import Footer from "./components/Footer";
 // import SignUp from "./pages/SignUp";
 // import SignIn from "./pages/SignIn";
 import Home from "./pages/Home";
-import Login from "./pages/Login";
+import Login from "./context/Login";
 
 import "./App.scss";
 
