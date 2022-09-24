@@ -110,7 +110,7 @@ const SignIn = () => {
           </div>
           <div className="mt-5">
             New to WasaFatna?{" "}
-            <Link className="text-primary text-decoration-none" to={`/signUp`}>
+            <Link className="text-primary text-decoration-none" to={`/api/signUp`}>
               Sign Up Now.
             </Link>
           </div>

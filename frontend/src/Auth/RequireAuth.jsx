@@ -10,7 +10,7 @@ const RequireAuth = () => {
       <Outlet />
     </>
   ) : (
-    <Navigate to={"/signIn"} state={{ from: location }} replace />
+    <Navigate to={"/api/signIn"} state={{ from: location }} replace />
   );
 };
 

@@ -8,9 +8,6 @@ import Home from "../pages/Home";
 
 import NavbarComp from "../components/NavbarComp";
 
-import Product from "../pages/Product";
-import Products from "../pages/Products";
-
 export const RecipessContext = createContext();
 
 const RecipesModule = () => {
@@ -46,9 +43,6 @@ const RecipesModule = () => {
       <NavbarComp />
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
-{/* 
-        <Route path="/ali" element={<Products />} />
-        <Route path="/ali/:id" element={<Product />} /> */}
 
         {/* <Route element={<RequireAuth />}></Route> */}
       </Routes>

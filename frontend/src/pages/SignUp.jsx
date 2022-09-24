@@ -231,7 +231,7 @@ const SignUp = () => {
 
           <div className="mt-5">
             Already have an account?{" "}
-            <Link className="text-primary text-decoration-none" to={`/signIn`}>
+            <Link className="text-primary text-decoration-none" to={`/api/signIn`}>
               Sign In.
             </Link>
           </div>
