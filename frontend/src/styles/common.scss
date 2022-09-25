@@ -37,5 +37,20 @@
 
 // background color
 .bg-light-warning {
-  background: #ffc1076f;
+  background: #ffc1076f !important;
+}
+
+//position
+.right-15 {
+  right: 15px;
+}
+
+//style
+a {
+  text-decoration: none;
+}
+
+//width
+.max-w-300 {
+  max-width: 300px;
 }

@@ -5,8 +5,13 @@ import axios from "../api/axios";
 // import RequireAuth from "./Auth/RequireAuth";
 
 import Home from "../pages/Home";
+import NotFound from "../pages/NotFound";
 
 import NavbarComp from "../components/NavbarComp";
+
+import Profile from "../pages/Profile";
+import Favourite from "../pages/Favourite";
+import UserRecipes from "../pages/UserRecipes";
 
 export const RecipessContext = createContext();
 
@@ -43,8 +48,14 @@ const RecipesModule = () => {
       <NavbarComp />
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
+        <Route path="*" element={<NotFound />} />
 
-        {/* <Route element={<RequireAuth />}></Route> */}
+        {/* <Route element={<RequireAuth />}> */}
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/favourite" element={<Favourite />} />
+          <Route path="/myRecipes" element={<UserRecipes />} />
+
+        {/* </Route> */}
       </Routes>
     </RecipessContext.Provider>
   );

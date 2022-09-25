@@ -1,18 +1,17 @@
 import { Suspense } from "react";
 import { Spinner } from "react-bootstrap";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthProvider";
 import RequireAuth from "./Auth/RequireAuth";
 import RequireLoggedAut from "./Auth/RequireLoggedAut";
 
-import Footer from "./components/Footer";
-import RecipesModule from "./context/RecipesModule"
-
-// import SignUp from "./pages/SignUp";
-// import SignIn from "./pages/SignIn";
-// import Home from "./pages/Home";
+import RecipesModule from "./context/RecipesModule";
 import Login from "./context/Login";
+
+// import Home from "./pages/Home";
+import Footer from "./components/Footer";
+import NotFound from "./pages/NotFound";
 
 import "./App.scss";
 
@@ -33,7 +32,9 @@ const App = () => {
                 <Route element={<RequireLoggedAut />}>
                   <Route path="/api/*" element={<Login />} />
                 </Route>
-                <Route path="/*" element={<RecipesModule />} />
+                <Route path="/home/*" element={<RecipesModule />} />
+                <Route path="/" element={<Navigate to="/home" />} />
+                <Route path="*" element={<NotFound />} />
 
                 {/* <Route path="/" element={<Home />} /> */}
 

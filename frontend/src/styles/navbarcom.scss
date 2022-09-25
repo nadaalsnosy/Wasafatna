@@ -1,0 +1,40 @@
+.nav-item .dropdown-menu {
+  left: -25px !important;
+  background: #ffe493 !important;
+  max-width: 200px;
+  margin: auto;
+}
+
+.nav-item .dropdown-menu .dropdown-item:focus,
+.dropdown-item:hover {
+  background-color: #ffedbb;
+  color: #28a745;
+}
+
+.navbar-collapse {
+  flex-grow: unset;
+}
+
+.navbar .form-control:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.25rem #28a74540;
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 0.25rem #28a74540 !important;
+}
+
+.userImg {
+  width: 100%;
+}
+.userImgContainer {
+  width: 25px;
+  height: 25px;
+  margin: 0 5px;
+}
+
+#basic-nav-dropdown {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
