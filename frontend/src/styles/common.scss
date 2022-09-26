@@ -11,6 +11,7 @@
 // common things
 img {
   width: 100%;
+  transition: 0.7s ease;
 }
 .centeringBody {
   display: flex;
@@ -59,6 +60,13 @@ img {
 //style
 a {
   text-decoration: none;
+  color: unset;
+}
+a:hover {
+  color: #28a745;
+}
+a:hover img {
+  opacity: 0.8;
 }
 
 //width

@@ -1,8 +1,8 @@
 import React from "react";
 import { Card, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import img1 from "../images/img1.png";
-import img2 from "../images/img2.png";
+import img1 from "../images/image1.jpg";
+import img2 from "../images/image2.jpg";
 
 const RecipeCard = () => {
   let text = `With supporting text below as a natural lead-in to additional
@@ -18,7 +18,7 @@ const RecipeCard = () => {
                 <div className="userImgContainer">
                   <img className="userImg" src={img2} alt="avatar" />
                 </div>
-                <p className="m-0">User Name</p>
+                <p className="m-0 text-black">User Name</p>
               </div>
             </Card.Header>
             <Card.Body className="d-md-flex">
