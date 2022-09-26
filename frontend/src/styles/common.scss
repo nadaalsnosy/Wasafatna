@@ -9,6 +9,9 @@
 }
 
 // common things
+img {
+  width: 100%;
+}
 .centeringBody {
   display: flex;
   justify-content: center;
@@ -33,9 +36,17 @@
   font-size: 35px;
 }
 
+// font weight
+.font-weight-bold {
+  font-weight: bold;
+}
+
 // text color
 
 // background color
+.light-red {
+  background: #ff00000f;
+}
 .bg-light-warning {
   background: #ffc1076f !important;
 }

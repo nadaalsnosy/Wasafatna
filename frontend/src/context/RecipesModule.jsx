@@ -12,6 +12,7 @@ import NavbarComp from "../components/NavbarComp";
 import Profile from "../pages/Profile";
 import Favourite from "../pages/Favourite";
 import UserRecipes from "../pages/UserRecipes";
+import Recipe from "../pages/Recipe";
 
 export const RecipessContext = createContext();
 
@@ -49,6 +50,7 @@ const RecipesModule = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
+        <Route path="/recipe" element={<Recipe />} />
 
         {/* <Route element={<RequireAuth />}> */}
           <Route path="/profile" element={<Profile />} />
