@@ -1,0 +1,20 @@
+.css-quj9j6-MuiTable-root {
+  min-width: unset !important;
+}
+
+.edit-container {
+  position: absolute;
+  background: #28a745;
+  right: 10px;
+  bottom: 20px;
+  padding: 6px 10px 10px;
+  color: #ffe493;
+  border-radius: 50%;
+  transition: 0.5s ease;
+}
+.edit-container:hover {
+  background: #329449;
+}
+.profile-img-container {
+  width: 250px;
+}

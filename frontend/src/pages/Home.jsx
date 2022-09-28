@@ -2,6 +2,7 @@ import logo from "./../logo.svg";
 import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
 
+
 const Home = () => {
   return (
     <>
@@ -11,6 +12,8 @@ const Home = () => {
           <RecipeCard />
           <RecipeCard />
           <RecipeCard />
+          <RecipeCard />
+
         </div>
       </AnimatedPage>
     </>

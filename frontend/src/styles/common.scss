@@ -7,17 +7,24 @@
   margin: 0;
   box-sizing: border-box;
 }
+// ...........................................................
+
+// background color
+.light-red {
+  background: #ff00000f;
+}
+.bg-light-warning {
+  background: #ffe493 !important;
+}
+// ...........................................................
 
 // common things
-img {
-  width: 100%;
-  transition: 0.7s ease;
-}
 .centeringBody {
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .shown {
   visibility: visible !important;
 }
@@ -31,45 +38,72 @@ img {
 .block {
   display: block !important;
 }
+// ...........................................................
 
-// font size
-.fs-35 {
-  font-size: 35px;
+// distance
+.gap-5 {
+  gap: 5%;
 }
+// ...........................................................
 
-// font weight
-.font-weight-bold {
-  font-weight: bold;
+//tag
+img {
+  width: 100%;
+  transition: 0.7s ease;
 }
-
-// text color
-
-// background color
-.light-red {
-  background: #ff00000f;
-}
-.bg-light-warning {
-  background: #ffc1076f !important;
-}
-
-//position
-.right-15 {
-  right: 15px;
-}
-
-//style
 a {
   text-decoration: none;
   color: unset;
 }
+// ...........................................................
+
+//tag style
 a:hover {
   color: #28a745;
 }
 a:hover img {
   opacity: 0.8;
 }
+.text-left {
+  text-align: left !important;
+}
+.overflow-h {
+  overflow: hidden !important;
+  // ...........................................................
+}
+
+// text color
+// ...........................................................
+
+// text size
+.fs-35 {
+  font-size: 35px;
+}
+.fs-45 {
+  font-size: 45px;
+}
+.fs-7 {
+  font-size: 0.875rem !important;
+}
+// ...........................................................
+
+// text weight
+.font-weight-bold {
+  font-weight: bold;
+}
+// ...........................................................
+
+//position
+.right-15 {
+  right: 15px;
+}
+// ...........................................................
 
 //width
 .max-w-300 {
   max-width: 300px;
+}
+.fit-content {
+  width: fit-content !important;
+  height: fit-content !important;
 }

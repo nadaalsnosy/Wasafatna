@@ -25,7 +25,7 @@ const NavbarComp = () => {
 
   return (
     <>
-      <Navbar className="bg-light-warning" bg="light" expand="lg">
+      <Navbar className="bg-light-warning sticky-top" bg="light" expand="lg">
         <Container className="flex-nowrap d-block d-lg-flex">
           <div className="d-flex justify-content-between flex-grow-1">
             <Navbar.Brand className="pt-0">
