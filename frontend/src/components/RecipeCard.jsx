@@ -17,9 +17,14 @@ import img2 from "../images/image2.jpg";
 const RecipeCard = () => {
   let text = `With supporting text below as a natural lead-in to additional
     content.With supporting text below as a natural lead-in to additional
-    content.`;
+    content.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+    Nisi quia, quasi error temporibus cumque facere totam excepturi corporis
+    obcaecati assumenda est tempore deserunt amet sed. Facere, provident?
+    A architecto unde nisi eius harum numquam voluptates sapiente possimus
+    explicabo dolore nemo atque ducimus ea, labore voluptatibus excepturi
+    magni minus ullam. Porro.`;
   return (
-    <div className="m-auto col-md-6 col-lg-4 p-3">
+    <div className="m-auto m-md-0 col-md-6 col-lg-4 p-3">
       <Link to={"recipe"}>
         <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
           <CardHeader
@@ -43,8 +48,9 @@ const RecipeCard = () => {
             alt="Paella dish"
           />
           <CardContent>
+            <h5>Recipe Name</h5>
             <Typography variant="body2" color="text.secondary">
-              {text}
+              {text.substring(0, 200)}....
             </Typography>
           </CardContent>
         </Card>

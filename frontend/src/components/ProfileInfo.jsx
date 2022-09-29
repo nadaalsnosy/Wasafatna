@@ -17,7 +17,6 @@ const ProfileInfo = () => {
   function createData(property, value) {
     return { property, value };
   }
-  console.log(editCond);
 
   let handleChangeEditCond = () => {
     if (editCond) {

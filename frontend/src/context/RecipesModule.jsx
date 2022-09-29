@@ -13,6 +13,7 @@ import Profile from "../pages/Profile";
 import Favourite from "../pages/Favourite";
 import UserRecipes from "../pages/UserRecipes";
 import Recipe from "../pages/Recipe";
+import CreateRecipe from "../pages/CreateRecipe";
 
 export const RecipessContext = createContext();
 
@@ -53,9 +54,10 @@ const RecipesModule = () => {
         <Route path="/recipe" element={<Recipe />} />
 
         {/* <Route element={<RequireAuth />}> */}
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/favourite" element={<Favourite />} />
-          <Route path="/myRecipes" element={<UserRecipes />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/favourite" element={<Favourite />} />
+        <Route path="/myRecipes" element={<UserRecipes />} />
+        <Route path="/myRecipes/createRecipe" element={<CreateRecipe />} />
 
         {/* </Route> */}
       </Routes>
