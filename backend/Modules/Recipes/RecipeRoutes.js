@@ -20,6 +20,7 @@ recipeRouter.get("/user/:id", getUserRecipes);
 recipeRouter.post(
   "/:id",
   upload.array("uploadedFiles", 30),
+  upload.single("mainImg"),
   verifyToken,
   addNew
 );
@@ -28,6 +29,7 @@ recipeRouter.patch(
   "/:id",
   verifyToken,
   upload.array("uploadedFiles", 30),
+  upload.single("mainImg"),
   updateOne
 );
 recipeRouter.delete("/:id", verifyToken, deleteOne);

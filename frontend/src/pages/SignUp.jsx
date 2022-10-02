@@ -149,15 +149,6 @@ const SignUp = () => {
             >
               please enter valid email!
             </p>
-            {/* <p
-              ref={errRef}
-              className={`errMsg ${errMsg ? "shown" : "hidden"} ${
-                emailFocus && !validEmail ? "none" : "block"
-              }`}
-              aria-live="assertive"
-            >
-              {errMsg}
-            </p> */}
           </Form.Group>
 
           <Form.Group className="mb-4" controlId="formGridPassword">
@@ -231,7 +222,10 @@ const SignUp = () => {
 
           <div className="mt-5">
             Already have an account?{" "}
-            <Link className="text-primary text-decoration-none" to={`/api/signIn`}>
+            <Link
+              className="text-primary text-decoration-none"
+              to={`/api/signIn`}
+            >
               Sign In.
             </Link>
           </div>

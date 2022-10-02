@@ -10,8 +10,16 @@ const signUp = async (req, res, next) => {
   try {
     const newUser = new User({ username, email, password });
     if (req.file) {
-      newUser.userImg = req.file.path;
+      if (
+        req.file.mimetype === "image/jpeg" ||
+        req.file.mimetype === "image/png"
+      ) {
+        newUser.userImg = req.file.path;
+      } else {
+        throw new Error(`You must add jpeg or png only!`);
+      }
     }
+
     const createdUser = await newUser.save();
     res.send(createdUser);
   } catch (error) {

@@ -5,6 +5,10 @@ const RecipeSchema = new Schema({
     type: String,
     required: true,
   },
+  mainImg: {
+    type: String,
+    default: "uploads\\recipeImage\\foodIcon.png",
+  },
   rate: {
     type: Number,
   },

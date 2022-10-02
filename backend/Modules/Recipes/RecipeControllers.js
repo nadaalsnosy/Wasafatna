@@ -95,6 +95,17 @@ const addNew = async (req, res, next) => {
         createdBy: req.userPayload.id,
       });
 
+      if (req.file) {
+        if (
+          req.file.mimetype === "image/jpeg" ||
+          req.file.mimetype === "image/png"
+        ) {
+          newRecipe.mainImg = req.file.path;
+        } else {
+          throw new Error(`You must add jpeg or png only!`);
+        }
+      }
+
       const createdRecipe = await newRecipe.save();
       res.send(createdRecipe);
     } else {
@@ -135,11 +146,25 @@ const updateOne = async (req, res, next) => {
           });
         });
       }
+      if (req.file) {
+        if (
+          req.file.mimetype === "image/jpeg" ||
+          req.file.mimetype === "image/png"
+        ) {
+          if (recipe.mainImg) {
+            fs.unlinkSync(recipe.mainImg);
+          }
+          recipe.mainImg = req.file.path;
+        } else {
+          throw new Error(`You must add jpeg or png only!`);
+        }
+      }
 
       const updatedRecipes = await Recipe.findByIdAndUpdate(
         id,
         {
           title,
+          mainImg,
           rate,
           recipesImgs: recipe.recipesImgs,
           ingredients,
@@ -162,7 +187,8 @@ const updateOne = async (req, res, next) => {
 const deleteOne = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { recipesImgs, createdBy, recipesVideos } = await Recipe.findById(id);
+    const { recipesImgs, createdBy, recipesVideos, mainImg } =
+      await Recipe.findById(id);
 
     if (
       req.userPayload.id === createdBy.toString() ||
@@ -178,6 +204,9 @@ const deleteOne = async (req, res, next) => {
         recipesVideos.forEach((item) => {
           fs.unlinkSync(item);
         });
+      }
+      if (mainImg !== "images\\foodIcon.png") {
+        fs.unlinkSync(mainImg);
       }
 
       const deletedRecipe = await Recipe.findByIdAndDelete(id);
@@ -202,4 +231,11 @@ const getOne = async (req, res, next) => {
   }
 };
 
-module.exports = { addNew, updateOne, deleteOne, getOne, getAll, getUserRecipes };
+module.exports = {
+  addNew,
+  updateOne,
+  deleteOne,
+  getOne,
+  getAll,
+  getUserRecipes,
+};
