@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import AnimatedPage from "../components/AnimatedPage";
 import { Form, Button } from "react-bootstrap";
 import BackupIcon from "@mui/icons-material/Backup";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 import { MenuItem, FormControl, Select } from "@mui/material";
 
 const CreateRecipe = () => {
+  const [mainImg, setMainImg] = useState("");
   const [uploadedImgs, setUploadedImgs] = useState([]);
   const [uploadedVideos, setUploadedVideos] = useState([]);
-  const [mainImg, setMainImg] = useState("");
 
   let mainImgSelectHandeler = (e) => {
     let imgFile = e.target.files[0];
@@ -16,7 +17,9 @@ const CreateRecipe = () => {
     if (imgFile.type.substr(0, 5) === "image") {
       setMainImg({
         imgPath: URL.createObjectURL(imgFile),
-        imgName: imgFile.name.replace(/[.]/g, "-"),
+        imgName: `${new Date()
+          .toISOString()
+          .replace(/[./:/-]/g, "")}${imgFile.name.replace(/[.]/g, "-")}`,
       });
     }
   };
@@ -30,11 +33,17 @@ const CreateRecipe = () => {
       if (file.type.substr(0, 5) === "image") {
         imagesArr.push({
           imgPath: URL.createObjectURL(file),
-          imgName: file.name.replace(/[.]/g, "-"),
+          imgName: `${new Date()
+            .toISOString()
+            .replace(/[./:/-]/g, "")}${file.name.replace(/[.]/g, "-")}`,
         });
       }
     });
-    setUploadedImgs(imagesArr);
+    if (uploadedImgs.length === 0) {
+      setUploadedImgs(imagesArr);
+    } else {
+      setUploadedImgs([...uploadedImgs, ...imagesArr]);
+    }
   };
 
   let videosSelectHandeler = (e) => {
@@ -46,11 +55,31 @@ const CreateRecipe = () => {
       if (file.type.substr(0, 5) === "video") {
         videosArr.push({
           videoPath: URL.createObjectURL(file),
-          videoName: file.name.replace(/[.]/g, "-"),
+          videoName: `${new Date()
+            .toISOString()
+            .replace(/[./:/-]/g, "")}${file.name.replace(/[.]/g, "-")}`,
         });
       }
     });
-    setUploadedVideos(videosArr);
+    if (uploadedVideos.length === 0) {
+      setUploadedVideos(videosArr);
+    } else {
+      setUploadedVideos([...uploadedVideos, ...videosArr]);
+    }
+  };
+
+  let deleteImageHandler = (imgName) => {
+    let newImages = uploadedImgs.filter((item) => {
+      return item.imgName !== imgName;
+    });
+    setUploadedImgs(newImages);
+  };
+
+  let deleteVideoHandler = (videoName) => {
+    let newVideos = uploadedVideos.filter((item) => {
+      return item.videoName !== videoName;
+    });
+    setUploadedVideos(newVideos);
   };
 
   const [validated, setValidated] = useState(false);
@@ -81,7 +110,7 @@ const CreateRecipe = () => {
             noValidate
             validated={validated}
             onSubmit={handleSubmit}
-            className="container text-start"
+            className="container text-start mw-840"
           >
             <Form.Group className={`mb-5`}>
               <Form.Label>Recipe Title</Form.Label>
@@ -146,11 +175,22 @@ const CreateRecipe = () => {
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
                 {uploadedImgs?.map((uploadedImg, i) => (
-                  <img
-                    src={uploadedImg.imgPath}
-                    alt={`${uploadedImg.imgName}`}
-                    key={i}
-                  />
+                  <div
+                    className="d-inline-block position-relative"
+                    key={uploadedImg.imgName}
+                  >
+                    <span className="position-absolute deleteIcon">
+                      <HighlightOffIcon
+                        onClick={() => deleteImageHandler(uploadedImg.imgName)}
+                        color="error"
+                        className="bg-light-yellow rounded-circle"
+                      />
+                    </span>
+                    <img
+                      src={uploadedImg.imgPath}
+                      alt={`${uploadedImg.imgName}`}
+                    />
+                  </div>
                 ))}
               </div>
             </Form.Group>
@@ -169,15 +209,30 @@ const CreateRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
-                {uploadedVideos?.map((uploadedVideo, i) => (
-                  <video controls key={i}>
-                    <source src={uploadedVideo.videoPath} type="video/mp4" />
-                  </video>
+                {uploadedVideos?.map((uploadedVideo) => (
+                  <div
+                    className="d-inline-block position-relative"
+                    key={uploadedVideo.videoName}
+                  >
+                    <span className="position-absolute deleteIcon">
+                      <HighlightOffIcon
+                        onClick={() => deleteVideoHandler(uploadedVideo.videoName)}
+                        color="error"
+                        className="bg-light-yellow rounded-circle"
+                      />
+                    </span>
+                    <video
+                      controls
+                      key={uploadedVideo.videoName}
+                    >
+                      <source src={uploadedVideo.videoPath} type="video/mp4" />
+                    </video>
+                  </div>
                 ))}
               </div>
             </Form.Group>
 
-            <Form.Group>
+            <Form.Group className={`mb-5`}>
               <Form.Label>Instructions</Form.Label>
               <FormControl className="d-block">
                 <Select

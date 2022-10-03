@@ -8,7 +8,7 @@ import { faTwitter } from "@fortawesome/free-brands-svg-icons";
 
 const Footer = () => {
   return (
-    <div className="footerLight centeringBody grayBoderTop">
+    <div className="footerLight centeringBody yellowBoderTop mt-5">
       <div className="d-flex justify-content-between">
         <a
           href="https://www.facebook.com/"

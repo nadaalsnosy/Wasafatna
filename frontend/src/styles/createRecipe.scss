@@ -89,3 +89,17 @@ select.decorated option:hover {
   position: absolute;
   right: 11px;
 }
+
+.mw-840 {
+  max-width: 840px !important;
+}
+
+.deleteIcon {
+  right: 10px;
+  top: 5px;
+  z-index: 1;
+}
+
+.deleteIcon svg:hover {
+  color: #329449;
+}
