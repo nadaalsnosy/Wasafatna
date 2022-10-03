@@ -5,31 +5,11 @@
 }
 .uploadIcon:hover {
   color: #329449;
-  //   font-size: 30px;
 }
 
-.genreOption {
-  display: block !important;
-  margin: 20px !important;
-  color: red !important;
-  background: #28a745 !important;
-}
-option select:hover {
-  display: block;
-  margin: 20px !important;
-  color: rgb(61, 17, 156) !important;
-  background: #28a745 !important;
-}
 .css-hdw1oc {
   display: none !important;
 }
-
-select.decorated option:hover {
-  box-shadow: 0 0 10px 100px #1882a8 inset;
-}
-// select:focus > option:checked {
-//   background: rgb(255, 96, 96) !important;
-// }
 
 .css-11u53oe-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input {
   display: block !important;
@@ -44,12 +24,12 @@ select.decorated option:hover {
   border: none !important;
 }
 
-.notranslate span {
-  display: none;
-}
+// .notranslate span {
+//   display: none;
+// }
 .notranslate:after {
   content: "Choose Genre";
-  color: #949595;
+  color: #7c7c7c;
 }
 .css-kk1bwy-MuiButtonBase-root-MuiMenuItem-root:hover {
   background: #dff6e4 !important;
@@ -88,6 +68,7 @@ select.decorated option:hover {
 .uploadIconLable {
   position: absolute;
   right: 11px;
+  top: 5px;
 }
 
 .mw-840 {
@@ -102,4 +83,9 @@ select.decorated option:hover {
 
 .deleteIcon svg:hover {
   color: #329449;
+}
+
+.inputPlaceholder {
+  user-select: none;
+  color: #7c7c7c;
 }

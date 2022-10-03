@@ -93,10 +93,10 @@ const CreateRecipe = () => {
     setValidated(true);
   };
 
-  const [age, setAge] = useState("");
+  const [genre, setGenre] = useState("other");
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const handleChangeGenre = (event) => {
+    setGenre(event.target.value);
   };
 
   return (
@@ -117,7 +117,7 @@ const CreateRecipe = () => {
               <Form.Control
                 className="passInput fs-7"
                 type="text"
-                placeholder={`Enter Your Recipe Tilte`}
+                placeholder={`Enter The Recipe Tilte`}
                 required
               />
             </Form.Group>
@@ -134,8 +134,12 @@ const CreateRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
-                {mainImg && (
+                {mainImg ? (
                   <img src={mainImg.imgPath} alt={`${mainImg.imgName}`} />
+                ) : (
+                  <p className="fs-7 inputPlaceholder">
+                    Choose The Recipe Main Image ...
+                  </p>
                 )}
               </div>
             </Form.Group>
@@ -143,20 +147,20 @@ const CreateRecipe = () => {
             <Form.Group className={`mb-5`}>
               <Form.Label>Ingredients</Form.Label>
               <Form.Control
+                placeholder={`Enter The Recipe Ingredients ...`}
                 className="passInput fs-7"
                 as="textarea"
                 rows={5}
-                required
               />
             </Form.Group>
 
             <Form.Group className={`mb-5`}>
               <Form.Label>Instructions</Form.Label>
               <Form.Control
+                placeholder={`Enter The Recipe Instructions ...`}
                 className="passInput fs-7"
                 as="textarea"
                 rows={5}
-                required
               />
             </Form.Group>
 
@@ -174,24 +178,32 @@ const CreateRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
-                {uploadedImgs?.map((uploadedImg, i) => (
-                  <div
-                    className="d-inline-block position-relative"
-                    key={uploadedImg.imgName}
-                  >
-                    <span className="position-absolute deleteIcon">
-                      <HighlightOffIcon
-                        onClick={() => deleteImageHandler(uploadedImg.imgName)}
-                        color="error"
-                        className="bg-light-yellow rounded-circle"
+                {uploadedImgs.length !== 0 ? (
+                  uploadedImgs.map((uploadedImg, i) => (
+                    <div
+                      className="d-inline-block position-relative"
+                      key={uploadedImg.imgName}
+                    >
+                      <span className="position-absolute deleteIcon">
+                        <HighlightOffIcon
+                          onClick={() =>
+                            deleteImageHandler(uploadedImg.imgName)
+                          }
+                          color="error"
+                          className="bg-light-yellow rounded-circle"
+                        />
+                      </span>
+                      <img
+                        src={uploadedImg.imgPath}
+                        alt={`${uploadedImg.imgName}`}
                       />
-                    </span>
-                    <img
-                      src={uploadedImg.imgPath}
-                      alt={`${uploadedImg.imgName}`}
-                    />
-                  </div>
-                ))}
+                    </div>
+                  ))
+                ) : (
+                  <p className="fs-7 inputPlaceholder">
+                    Choose The Recipe Images ...
+                  </p>
+                )}
               </div>
             </Form.Group>
 
@@ -209,37 +221,44 @@ const CreateRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
-                {uploadedVideos?.map((uploadedVideo) => (
-                  <div
-                    className="d-inline-block position-relative"
-                    key={uploadedVideo.videoName}
-                  >
-                    <span className="position-absolute deleteIcon">
-                      <HighlightOffIcon
-                        onClick={() => deleteVideoHandler(uploadedVideo.videoName)}
-                        color="error"
-                        className="bg-light-yellow rounded-circle"
-                      />
-                    </span>
-                    <video
-                      controls
+                {uploadedVideos.length !== 0 ? (
+                  uploadedVideos.map((uploadedVideo) => (
+                    <div
+                      className="d-inline-block position-relative"
                       key={uploadedVideo.videoName}
                     >
-                      <source src={uploadedVideo.videoPath} type="video/mp4" />
-                    </video>
-                  </div>
-                ))}
+                      <span className="position-absolute deleteIcon">
+                        <HighlightOffIcon
+                          onClick={() =>
+                            deleteVideoHandler(uploadedVideo.videoName)
+                          }
+                          color="error"
+                          className="bg-light-yellow rounded-circle"
+                        />
+                      </span>
+                      <video controls key={uploadedVideo.videoName}>
+                        <source
+                          src={uploadedVideo.videoPath}
+                          type="video/mp4"
+                        />
+                      </video>
+                    </div>
+                  ))
+                ) : (
+                  <p className="fs-7 inputPlaceholder">
+                    Choose The Recipe Videos ...
+                  </p>
+                )}
               </div>
             </Form.Group>
 
             <Form.Group className={`mb-5`}>
-              <Form.Label>Instructions</Form.Label>
+              <Form.Label>Genre</Form.Label>
               <FormControl className="d-block">
                 <Select
                   className="w-100"
-                  // placeholder="lolo"
-                  value={age}
-                  onChange={handleChange}
+                  value={genre}
+                  onChange={handleChangeGenre}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                 >
