@@ -51,13 +51,17 @@
 // ...........................................................
 
 //tag
-img {
+img,
+video {
   width: 100%;
   transition: 0.7s ease;
 }
 a {
   text-decoration: none !important;
   color: unset;
+}
+pre {
+  font-family: inherit;
 }
 // ...........................................................
 
@@ -77,6 +81,9 @@ a:hover img {
 }
 
 // text color
+.text-placeholder {
+  color: #7c7c7c;
+}
 // ...........................................................
 
 // text size
@@ -107,7 +114,17 @@ a:hover img {
 .max-w-300 {
   max-width: 300px;
 }
+
+.max-w-460 {
+  max-width: 460px;
+}
 .fit-content {
   width: fit-content !important;
   height: fit-content !important;
+}
+
+@media (min-width: 992px) {
+  .max-w-900 {
+    max-width: 900px;
+  }
 }

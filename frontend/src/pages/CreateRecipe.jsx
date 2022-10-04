@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import AnimatedPage from "../components/AnimatedPage";
-import { Form, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 import BackupIcon from "@mui/icons-material/Backup";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
-import { MenuItem, FormControl, Select } from "@mui/material";
+import { MenuItem, FormControl, Select, Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 const CreateRecipe = () => {
   const [mainImg, setMainImg] = useState("");
   const [uploadedImgs, setUploadedImgs] = useState([]);
   const [uploadedVideos, setUploadedVideos] = useState([]);
+
+  const [ingredients, setIngredients] = useState("");
 
   let mainImgSelectHandeler = (e) => {
     let imgFile = e.target.files[0];
@@ -93,7 +96,7 @@ const CreateRecipe = () => {
     setValidated(true);
   };
 
-  const [genre, setGenre] = useState("other");
+  const [genre, setGenre] = useState("");
 
   const handleChangeGenre = (event) => {
     setGenre(event.target.value);
@@ -147,6 +150,11 @@ const CreateRecipe = () => {
             <Form.Group className={`mb-5`}>
               <Form.Label>Ingredients</Form.Label>
               <Form.Control
+                value={ingredients}
+                onChange={(e) => {
+                  setIngredients(e.target.value);
+                  console.log(e);
+                }}
                 placeholder={`Enter The Recipe Ingredients ...`}
                 className="passInput fs-7"
                 as="textarea"
@@ -273,10 +281,26 @@ const CreateRecipe = () => {
               </FormControl>
             </Form.Group>
 
-            <div className="text-end">
-              <Button variant="success fs-5" type="submit">
+            <div className="my-3 d-flex gap-2 justify-content-end">
+              <Button
+                // className="d-block ms-auto my-3 "
+                variant="contained"
+                color="success"
+                type="submit"
+                // onClick={handleChangeEditCond}
+              >
                 Save
               </Button>
+              <Link to={"/"}>
+                <Button
+                  // className="d-block ms-auto my-3 "
+                  variant="contained"
+                  color="error"
+                  // onClick={handleChangeEditCond}
+                >
+                  Cancle
+                </Button>
+              </Link>
             </div>
           </Form>
         </div>

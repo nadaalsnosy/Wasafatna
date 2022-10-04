@@ -29,7 +29,7 @@ const NavbarComp = () => {
         <Container className="flex-nowrap d-block d-lg-flex">
           <div className="d-flex justify-content-between flex-grow-1">
             <Navbar.Brand className="pt-0">
-              <Link to={"/home"}>
+              <Link to={"/"}>
                 <p className="text-success m-0 font-weight-bold fs-3">
                   wasa<span className="text-danger fs-2">F</span>atna
                 </p>

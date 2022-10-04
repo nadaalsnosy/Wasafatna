@@ -58,6 +58,7 @@ const RecipesModule = () => {
         <Route path="/favourite" element={<Favourite />} />
         <Route path="/myRecipes" element={<UserRecipes />} />
         <Route path="/createRecipe" element={<CreateRecipe />} />
+        <Route path="/editRecipe/:id" element={<CreateRecipe />} />
 
         {/* </Route> */}
       </Routes>
