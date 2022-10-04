@@ -32,8 +32,8 @@ const App = () => {
                 <Route element={<RequireLoggedAut />}>
                   <Route path="/api/*" element={<Login />} />
                 </Route>
-                <Route path="/home/*" element={<RecipesModule />} />
-                <Route path="/" element={<Navigate to="/home" />} />
+                <Route path="/*" element={<RecipesModule />} />
+                {/* <Route path="/" element={<Navigate to="/home" />} /> */}
                 <Route path="*" element={<NotFound />} />
 
                 {/* <Route path="/" element={<Home />} /> */}

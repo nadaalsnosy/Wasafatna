@@ -25,7 +25,7 @@ const RecipeCard = () => {
     magni minus ullam. Porro.`;
   return (
     <div className="m-auto m-md-0 col-md-6 col-lg-4 p-3">
-      <Link to={"recipe"}>
+      <Link to={"/recipe"}>
         <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
           <CardHeader
             avatar={

@@ -13,12 +13,11 @@ const UserRecipes = () => {
             <h1 className="fs-45 text-start my-5 mx-2 text-success">
               My Recipes
             </h1>
-            <Link to={"createRecipe"}>
+            <Link to={"/createRecipe"}>
               <Button
                 className="mb-3 m-md-0 me-md-4"
                 variant="contained"
                 color="error"
-                // onClick={handleChangeEditCond}
               >
                 Create New Recipe
               </Button>

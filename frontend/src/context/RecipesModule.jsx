@@ -57,7 +57,7 @@ const RecipesModule = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/favourite" element={<Favourite />} />
         <Route path="/myRecipes" element={<UserRecipes />} />
-        <Route path="/myRecipes/createRecipe" element={<CreateRecipe />} />
+        <Route path="/createRecipe" element={<CreateRecipe />} />
 
         {/* </Route> */}
       </Routes>
