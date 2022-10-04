@@ -15,7 +15,13 @@ const upload = require("../Uploads");
 userRouter.get("/", verifyToken, getUsers);
 userRouter.get("/:id", verifyToken, profile);
 //
-userRouter.post("/signUp", passwordHash, upload.single("userImg"), signUp);
+userRouter.post(
+  "/signUp",
+  validate,
+  passwordHash,
+  upload.single("userImg"),
+  signUp
+);
 userRouter.post("/signIn", login);
 //update
 userRouter.patch(

@@ -87,16 +87,26 @@ const profile = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { username, email, password, userListItem } = req.body;
+    const { username, email, password, userListItem, userFavouriteItem } =
+      req.body;
 
     if (req.userPayload.id === id || req.userPayload.isAdmin) {
-      let { userList, userImg } = await User.findById(id);
+      let { userList, userFavourite, userImg } = await User.findById(id);
 
       if (userListItem) {
         const exists = userList.some((item) => item._id === userListItem._id);
         userList = exists
           ? userList.filter((item) => item._id !== userListItem._id)
           : [...userList, userListItem];
+      }
+
+      if (userFavouriteItem) {
+        const exists = userFavourite.some(
+          (item) => item._id === userFavouriteItem._id
+        );
+        userFavourite = exists
+          ? userFavourite.filter((item) => item._id !== userFavouriteItem._id)
+          : [...userFavourite, userFavouriteItem];
       }
 
       if (req.file) {
@@ -115,7 +125,7 @@ const updateUser = async (req, res, next) => {
 
       const updatedUsers = await User.findByIdAndUpdate(
         id,
-        { username, email, password, userList, userImg },
+        { username, email, password, userList, userFavourite, userImg },
         { new: true }
       );
       res.send(updatedUsers);

@@ -31,6 +31,9 @@ const userSchema = new Schema({
   userList: {
     type: Array,
   },
+  userFavourite: {
+    type: Array,
+  },
   isAdmin: {
     type: Boolean,
     default: false,

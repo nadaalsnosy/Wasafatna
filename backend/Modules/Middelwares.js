@@ -51,6 +51,8 @@ const validate = (req, res, next) => {
         )
         .empty(""),
       userListItem: Joi.string(),
+      userFavouriteItem: Joi.string(),
+
     });
 
     Joi.attempt(req.body, schema);
