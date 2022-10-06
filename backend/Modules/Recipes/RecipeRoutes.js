@@ -19,8 +19,25 @@ recipeRouter.get("/user/:id", getUserRecipes);
 //
 recipeRouter.post(
   "/:id",
-  upload.array("uploadedFiles", 30),
-  upload.single("mainImg"),
+  upload.fields([
+    {
+      name: "mainImg",
+      maxCount: 1,
+    },
+    {
+      name: "uploadedImgs",
+      maxCount: 30,
+    },
+    {
+      name: "uploadedVideos",
+      maxCount: 30,
+    },
+  ]),
+  // upload.array("uploadedImgs", 30),
+  // upload.single("mainImg"),
+  // upload.array("uploadedFiles", 30),
+  // upload.array("uploadedVideos", 30),
+
   verifyToken,
   addNew
 );

@@ -2,7 +2,8 @@ const multer = require("multer");
 
 const fileLocation = (file) => {
   if (file.mimetype === "video/mp4") {
-    if (file.fieldname === "uploadedFiles") {
+    // if (file.fieldname === "uploadedFiles") {
+    if (file.fieldname === "uploadedVideos") {
       return `uploads/recipeVideos/`;
     } else {
       throw new Error("The file type must be jpej or png only!");
@@ -10,6 +11,8 @@ const fileLocation = (file) => {
   } else {
     if (file.fieldname === "userImg") {
       return `uploads/usersImage/`;
+    } else if (file.fieldname === "mainImg") {
+      return `uploads/recipeMainImg/`;
     } else {
       return `uploads/recipePhotos/`;
     }
@@ -43,6 +46,16 @@ const fileFilter = (req, file, cb) => {
 const uploadFiles = multer({
   fileFilter: fileFilter,
   storage: storage,
-});
+})
+// .fields([
+//   {
+//     name: "mainImg",
+//     maxCount: 1,
+//   },
+//   {
+//     name: "uploadedImgs",
+//     maxCount: 30,
+//   },
+// ]);
 
 module.exports = uploadFiles;

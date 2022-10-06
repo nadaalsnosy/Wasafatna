@@ -1,18 +1,50 @@
-import React, { useState } from "react";
-import AnimatedPage from "../components/AnimatedPage";
+import { useState, useContext, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+
 import { Form } from "react-bootstrap";
+import { MenuItem, FormControl, Select, Button } from "@mui/material";
 import BackupIcon from "@mui/icons-material/Backup";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
-import { MenuItem, FormControl, Select, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { RecipesContext } from "../context/RecipesModule";
+import useAuth from "../hooks/useAuth";
+import axios from "../api/axios";
 
+import AnimatedPage from "../components/AnimatedPage";
+
+const defaultRecipe = {
+  // _id: "",
+  title: "",
+  ingredients: "",
+  instructions: "",
+  // recipesImgs: "",
+  // recipesVideos: "",
+  genre: "",
+};
 const CreateRecipe = () => {
-  const [mainImg, setMainImg] = useState("");
+  const [mainImg, setMainImg] = useState();
   const [uploadedImgs, setUploadedImgs] = useState([]);
   const [uploadedVideos, setUploadedVideos] = useState([]);
 
-  const [ingredients, setIngredients] = useState("");
+  const [validated, setValidated] = useState(false);
+  // const [genre, setGenre] = useState("");
+
+  const { setRecipes, getRecipes, recipes } = useContext(RecipesContext);
+  const { auth } = useAuth();
+  const { id } = useParams();
+
+  const [recipe, setRecipe] = useState({});
+  const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe || recipe);
+
+  useEffect(() => {
+    if (recipes?.length) {
+      setRecipe(recipes.find((item) => item._id === id));
+    }
+  }, [id, recipes]);
+
+  // useEffect(() => {
+  //   setCurrentRecipe(recipe || defaultRecipe);
+  // }, [recipe]);
 
   let mainImgSelectHandeler = (e) => {
     let imgFile = e.target.files[0];
@@ -23,6 +55,7 @@ const CreateRecipe = () => {
         imgName: `${new Date()
           .toISOString()
           .replace(/[./:/-]/g, "")}${imgFile.name.replace(/[.]/g, "-")}`,
+        file: imgFile,
       });
     }
   };
@@ -39,6 +72,7 @@ const CreateRecipe = () => {
           imgName: `${new Date()
             .toISOString()
             .replace(/[./:/-]/g, "")}${file.name.replace(/[.]/g, "-")}`,
+          file: file,
         });
       }
     });
@@ -61,6 +95,7 @@ const CreateRecipe = () => {
           videoName: `${new Date()
             .toISOString()
             .replace(/[./:/-]/g, "")}${file.name.replace(/[.]/g, "-")}`,
+          file: file,
         });
       }
     });
@@ -85,21 +120,99 @@ const CreateRecipe = () => {
     setUploadedVideos(newVideos);
   };
 
-  const [validated, setValidated] = useState(false);
-
   const handleSubmit = (event) => {
     const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
+    event.preventDefault();
+
+    if (!form.checkValidity() === false) {
+      console.log(currentRecipe);
+      addRecipe(currentRecipe);
+    } else {
+      setValidated(true);
     }
-    setValidated(true);
+  };
+  let formData = new FormData();
+
+  const handleChangeValue = (e) => {
+    let { name, value, files } = e.target;
+
+    // console.log(e.target.files);
+    if (files) {
+      formData.append("images", { mainImg: files });
+      console.log(formData);
+      console.log(Array.from(formData));
+      // reader.onload = () =>{
+
+      // }
+      // setCurrentRecipe((item) => ({ ...item, [name]: filesValue }));
+    } else {
+      setCurrentRecipe((item) => ({ ...item, [name]: value }));
+    }
   };
 
-  const [genre, setGenre] = useState("");
+  const addRecipe = async (recipe) => {
+    const formData = new FormData();
+    if (mainImg) formData.append("mainImg", mainImg.file);
 
-  const handleChangeGenre = (event) => {
-    setGenre(event.target.value);
+    if (uploadedImgs) {
+      for (let i = 0; i < uploadedImgs.length; i++) {
+        formData.append("uploadedImgs", uploadedImgs[i].file);
+      }
+    }
+
+    if (uploadedVideos) {
+      for (let i = 0; i < uploadedVideos.length; i++) {
+        formData.append("uploadedVideos", uploadedVideos[i].file);
+      }
+    }
+
+    for (const key in recipe) {
+      if (Object.hasOwnProperty.call(recipe, key)) {
+        const element = recipe[key];
+        formData.append(key, element);
+      }
+    }
+    for (let item of formData) {
+      console.log(item);
+    }
+
+    try {
+      // const res = await axios.post(
+      //   "/recipes/62fd90c4eb21e594a0f45bc9",
+      //   JSON.stringify({
+      //     title: recipe.title,
+      //     mainImg: recipe.mainImg,
+      //     ingredients: recipe.ingredients,
+      //     instructions: recipe.instructions,
+      //     recipesImgs: recipe.recipesImgs,
+      //     recipesVideos: recipe.recipesVideos,
+      //     genre: recipe.genre,
+      //   }),
+      //   {
+      //     headers: {
+      //       "content-type": "application/json",
+      //       Authorization: `${auth.token}`,
+      //     },
+      //   }
+      // );
+      const resFiles = await axios.post(
+        "/recipes/62fd90c4eb21e594a0f45bc9",
+        formData,
+        {
+          headers: {
+            "content-type": "multipart/form-data",
+            // "content-type": "application/json",
+            Authorization: `${auth.token}`,
+          },
+        }
+      );
+      console.log(resFiles);
+      setRecipes((recipes) => [...recipes, { ...recipe }]);
+      console.log(recipes);
+      // getRecipes();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -119,8 +232,11 @@ const CreateRecipe = () => {
               <Form.Label>Recipe Title</Form.Label>
               <Form.Control
                 className="passInput fs-7"
-                type="text"
                 placeholder={`Enter The Recipe Tilte`}
+                type="text"
+                name="title"
+                value={currentRecipe.title}
+                onChange={handleChangeValue}
                 required
               />
             </Form.Group>
@@ -130,6 +246,8 @@ const CreateRecipe = () => {
               <Form.Control
                 className="d-none"
                 type="file"
+                name="mainImg"
+                // value={currentRecipe.mainImg}
                 onChange={mainImgSelectHandeler}
                 accept="image/*"
               />
@@ -150,11 +268,9 @@ const CreateRecipe = () => {
             <Form.Group className={`mb-5`}>
               <Form.Label>Ingredients</Form.Label>
               <Form.Control
-                value={ingredients}
-                onChange={(e) => {
-                  setIngredients(e.target.value);
-                  console.log(e);
-                }}
+                name="ingredients"
+                value={currentRecipe.ingredients}
+                onChange={handleChangeValue}
                 placeholder={`Enter The Recipe Ingredients ...`}
                 className="passInput fs-7"
                 as="textarea"
@@ -167,6 +283,9 @@ const CreateRecipe = () => {
               <Form.Control
                 placeholder={`Enter The Recipe Instructions ...`}
                 className="passInput fs-7"
+                name="instructions"
+                value={currentRecipe.instructions}
+                onChange={handleChangeValue}
                 as="textarea"
                 rows={5}
               />
@@ -177,7 +296,13 @@ const CreateRecipe = () => {
               <Form.Control
                 className="d-none"
                 type="file"
+                name="recipesImgs"
                 onChange={imgsSelectHandeler}
+                // value={currentRecipe.recipesImgs}
+                // onChange={(e) => {
+                //   imgsSelectHandeler(e);
+                //   handleChangeValue(e);
+                // }}
                 multiple
                 accept="image/*"
               />
@@ -220,7 +345,13 @@ const CreateRecipe = () => {
               <Form.Control
                 className="d-none"
                 type="file"
+                name="recipesVideos"
                 onChange={videosSelectHandeler}
+                // value={currentRecipe.recipesVideos}
+                // onChange={(e) => {
+                //   videosSelectHandeler(e);
+                //   handleChangeValue(e);
+                // }}
                 multiple
                 accept="video/*"
               />
@@ -265,12 +396,14 @@ const CreateRecipe = () => {
               <FormControl className="d-block">
                 <Select
                   className="w-100"
-                  value={genre}
-                  onChange={handleChangeGenre}
+                  name="genre"
+                  // value={defaultRecipe.genre}
+                  value={currentRecipe.genre}
+                  onChange={handleChangeValue}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                 >
-                  <MenuItem value="Breakfast">Breakfast</MenuItem>
+                  <MenuItem value="breakfast">Breakfast</MenuItem>
                   <MenuItem value="desserts">Desserts</MenuItem>
                   <MenuItem value="juices">Juices</MenuItem>
                   <MenuItem value="meals">Meals</MenuItem>

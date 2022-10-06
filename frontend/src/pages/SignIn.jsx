@@ -43,7 +43,7 @@ const SignIn = () => {
           setAuth({ token, user });
           localStorage.setItem("user", JSON.stringify(res.data));
         }
-        navigate("/home");
+        navigate("/");
       }
     } catch (err) {
       if (!err?.response) {

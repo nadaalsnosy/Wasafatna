@@ -5,7 +5,7 @@ const RecipeSchema = new Schema({
     type: String,
     required: true,
   },
-  mainImg: {
+  recipeMainImg: {
     type: String,
     default: "uploads\\recipeImage\\foodIcon.png",
   },

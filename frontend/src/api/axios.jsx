@@ -6,6 +6,6 @@ export default axios.create({
 
 export const axiosPrivate = axios.create({
   baseURL: process.env.BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  headers: { "Content-Type": "application/json" && "multipart/form-data" },
   withCredentials: true,
 });

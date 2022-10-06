@@ -70,21 +70,22 @@ const addNew = async (req, res, next) => {
       const { title, rate, ingredients, instructions, createdAt, genre } =
         req.body;
 
-      let recipesVideos = [];
+      let recipeMainImg = "";
       let recipesImgs = [];
+      let recipesVideos = [];
 
       if (req.files) {
-        req.files.forEach((item) => {
-          if (item.mimetype === "video/mp4") {
-            recipesVideos.push(item.path);
-          } else {
-            recipesImgs.push(item.path);
-          }
-        });
+        const { mainImg, uploadedImgs, uploadedVideos } = req.files;
+        if (mainImg) recipeMainImg = mainImg[0].path;
+        if (uploadedImgs)
+          uploadedImgs.forEach((item) => recipesImgs.push(item.path));
+        if (uploadedVideos)
+          uploadedVideos.forEach((item) => recipesVideos.push(item.path));
       }
 
       const newRecipe = new Recipe({
         title,
+        recipeMainImg,
         rate,
         recipesImgs,
         ingredients,
@@ -94,17 +95,6 @@ const addNew = async (req, res, next) => {
         genre,
         createdBy: req.userPayload.id,
       });
-
-      if (req.file) {
-        if (
-          req.file.mimetype === "image/jpeg" ||
-          req.file.mimetype === "image/png"
-        ) {
-          newRecipe.mainImg = req.file.path;
-        } else {
-          throw new Error(`You must add jpeg or png only!`);
-        }
-      }
 
       const createdRecipe = await newRecipe.save();
       res.send(createdRecipe);

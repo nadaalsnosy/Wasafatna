@@ -2,25 +2,27 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { useMemo, createContext, useState } from "react";
 
 import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 // import RequireAuth from "./Auth/RequireAuth";
+
+import NavbarComp from "../components/NavbarComp";
 
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
-
-import NavbarComp from "../components/NavbarComp";
+import Recipe from "../pages/Recipe";
 
 import Profile from "../pages/Profile";
 import Favourite from "../pages/Favourite";
 import UserRecipes from "../pages/UserRecipes";
-import Recipe from "../pages/Recipe";
 import CreateRecipe from "../pages/CreateRecipe";
 
-export const RecipessContext = createContext();
+export const RecipesContext = createContext();
 
 const RecipesModule = () => {
   const location = useLocation();
-
+  const { auth } = useAuth();
   const [recipes, setRecipes] = useState([]);
+  const [filterRecipes, setFilterRecipes] = useState([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getRecipes = async (page, limit, order, sort) => {
@@ -41,12 +43,14 @@ const RecipesModule = () => {
       getRecipes,
       recipes,
       setRecipes,
+      filterRecipes,
+      setFilterRecipes,
     }),
-    [getRecipes, recipes, setRecipes]
+    [getRecipes, recipes, setRecipes,filterRecipes,setFilterRecipes]
   );
 
   return (
-    <RecipessContext.Provider value={contextValue}>
+    <RecipesContext.Provider value={contextValue}>
       <NavbarComp />
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
@@ -62,7 +66,7 @@ const RecipesModule = () => {
 
         {/* </Route> */}
       </Routes>
-    </RecipessContext.Provider>
+    </RecipesContext.Provider>
   );
 };
 
