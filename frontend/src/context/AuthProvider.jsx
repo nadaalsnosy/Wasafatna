@@ -2,24 +2,24 @@ import { createContext, useEffect, useMemo, useState } from "react";
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  // const [auth, setAuth] = useState({});
-  const [auth, setAuth] = useState(() => {
-    const localAuth = localStorage.getItem("user");
-    return JSON.parse(localAuth) || {};
-  });
+  const [auth, setAuth] = useState();
 
-  // console.log(auth);
-  // useEffect(() => {
+  // const [auth, setAuth] = useState(() => {
   //   const localAuth = localStorage.getItem("user");
-  //   console.log(localAuth);
-  //   if (localAuth) {
-  //     setAuth(JSON.parse(localAuth));
-  //     console.log("emm");
-  //   }
-  // }, [setAuth]);
+  //   return JSON.parse(localAuth) || {};
+  // });
 
   useEffect(() => {
-    localStorage.setItem("user", JSON.stringify(auth));
+    const localAuth = localStorage.getItem("user");
+    console.log(localAuth);
+    if (localAuth) {
+      setAuth(JSON.parse(localAuth));
+    }
+  }, [setAuth]);
+
+  console.log(auth);
+  useEffect(() => {
+    if (auth) localStorage.setItem("user", JSON.stringify(auth));
   }, [auth]);
 
   const contextValue = useMemo(

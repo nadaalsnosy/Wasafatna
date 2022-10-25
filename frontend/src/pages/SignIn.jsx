@@ -10,7 +10,7 @@ import Logo from "../images/wasafatna.png";
 const SignIn = () => {
   const navigate = useNavigate();
   const { auth, setAuth } = useAuth();
-  console.log(auth);
+  // console.log(auth);
 
   const [userEmail, setUserEmail] = useState("");
   const [userPassword, setUserPassword] = useState("");

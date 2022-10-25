@@ -1,6 +1,7 @@
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { useRef, useState, useContext, useEffect, useCallback } from "react";
+// import { useRef, useState, useContext, useEffect, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 import Logo from "../images/wasafatnaCircle.png";
 
@@ -14,6 +15,8 @@ import {
 } from "react-bootstrap";
 
 const NavbarComp = () => {
+  const { auth, setAuth } = useAuth();
+  console.log(auth);
   const UserInfo = (
     <div className="d-flex">
       <p className="m-0">User Name</p>
@@ -22,6 +25,14 @@ const NavbarComp = () => {
       </div>
     </div>
   );
+  const handleLogOut = async (e) => {
+    try {
+      localStorage.removeItem("user");
+      setAuth("");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <>
@@ -55,35 +66,41 @@ const NavbarComp = () => {
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto justify-content-end">
-              <Link className="nav-link" to={"/api/signIn"}>
-                Sign In
-              </Link>
-              <Link className="nav-link" to={"/api/signUp"}>
-                Sign Up
-              </Link>
+              {auth ? (
+                <NavDropdown
+                  title={UserInfo}
+                  className="ms-3"
+                  id="basic-nav-dropdown"
+                >
+                  <div className="text-center text-lg-start">
+                    <Link className="dropdown-item" to={"profile"}>
+                      My Profile
+                    </Link>
+                    <Link className="dropdown-item" to={"favourite"}>
+                      Favourite
+                    </Link>
+                    <Link className="dropdown-item" to={"myRecipes"}>
+                      My Recipes
+                    </Link>
 
-              <NavDropdown
-                title={UserInfo}
-                className="ms-3"
-                id="basic-nav-dropdown"
-              >
-                <div className="text-center text-lg-start">
-                  <Link className="dropdown-item" to={"profile"}>
-                    My Profile
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href="">
+                      <span className="d-block" onClick={handleLogOut}>
+                        Sign Out
+                      </span>
+                    </NavDropdown.Item>
+                  </div>
+                </NavDropdown>
+              ) : (
+                <>
+                  <Link className="nav-link" to={"/api/signIn"}>
+                    Sign In
                   </Link>
-                  <Link className="dropdown-item" to={"favourite"}>
-                    Favourite
+                  <Link className="nav-link" to={"/api/signUp"}>
+                    Sign Up
                   </Link>
-                  <Link className="dropdown-item" to={"myRecipes"}>
-                    My Recipes
-                  </Link>
-
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item href="#action/3.4">
-                    Sign Out
-                  </NavDropdown.Item>
-                </div>
-              </NavDropdown>
+                </>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>
