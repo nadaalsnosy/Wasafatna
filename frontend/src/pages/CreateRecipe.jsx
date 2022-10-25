@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 import { Form } from "react-bootstrap";
 import { MenuItem, FormControl, Select, Button } from "@mui/material";
@@ -13,12 +13,9 @@ import axios from "../api/axios";
 import AnimatedPage from "../components/AnimatedPage";
 
 const defaultRecipe = {
-  // _id: "",
   title: "",
   ingredients: "",
   instructions: "",
-  // recipesImgs: "",
-  // recipesVideos: "",
   genre: "",
 };
 const CreateRecipe = () => {
@@ -32,6 +29,7 @@ const CreateRecipe = () => {
   const { setRecipes, getRecipes, recipes } = useContext(RecipesContext);
   const { auth } = useAuth();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [recipe, setRecipe] = useState({});
   const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe || recipe);
@@ -46,24 +44,24 @@ const CreateRecipe = () => {
   //   setCurrentRecipe(recipe || defaultRecipe);
   // }, [recipe]);
 
-  let mainImgSelectHandeler = (e) => {
-    let imgFile = e.target.files[0];
+  const mainImgSelectHandeler = (e) => {
+    const file = e.target.files[0];
 
-    if (imgFile.type.substr(0, 5) === "image") {
+    if (file.type.substr(0, 5) === "image") {
       setMainImg({
-        imgPath: URL.createObjectURL(imgFile),
+        imgPath: URL.createObjectURL(file),
         imgName: `${new Date()
           .toISOString()
-          .replace(/[./:/-]/g, "")}${imgFile.name.replace(/[.]/g, "-")}`,
-        file: imgFile,
+          .replace(/[./:/-]/g, "")}${file.name.replace(/[.]/g, "-")}`,
+        file: file,
       });
     }
   };
 
-  let imgsSelectHandeler = (e) => {
-    let files = e.target.files;
-    let filesArr = Array.from(files);
-    let imagesArr = [];
+  const imgsSelectHandeler = (e) => {
+    const files = e.target.files;
+    const filesArr = Array.from(files);
+    const imagesArr = [];
 
     filesArr.forEach((file) => {
       if (file.type.substr(0, 5) === "image") {
@@ -83,10 +81,10 @@ const CreateRecipe = () => {
     }
   };
 
-  let videosSelectHandeler = (e) => {
-    let files = e.target.files;
-    let filesArr = Array.from(files);
-    let videosArr = [];
+  const videosSelectHandeler = (e) => {
+    const files = e.target.files;
+    const filesArr = Array.from(files);
+    const videosArr = [];
 
     filesArr.forEach((file) => {
       if (file.type.substr(0, 5) === "video") {
@@ -106,15 +104,15 @@ const CreateRecipe = () => {
     }
   };
 
-  let deleteImageHandler = (imgName) => {
-    let newImages = uploadedImgs.filter((item) => {
+  const deleteImageHandler = (imgName) => {
+    const newImages = uploadedImgs.filter((item) => {
       return item.imgName !== imgName;
     });
     setUploadedImgs(newImages);
   };
 
-  let deleteVideoHandler = (videoName) => {
-    let newVideos = uploadedVideos.filter((item) => {
+  const deleteVideoHandler = (videoName) => {
+    const newVideos = uploadedVideos.filter((item) => {
       return item.videoName !== videoName;
     });
     setUploadedVideos(newVideos);
@@ -131,23 +129,10 @@ const CreateRecipe = () => {
       setValidated(true);
     }
   };
-  let formData = new FormData();
 
   const handleChangeValue = (e) => {
-    let { name, value, files } = e.target;
-
-    // console.log(e.target.files);
-    if (files) {
-      formData.append("images", { mainImg: files });
-      console.log(formData);
-      console.log(Array.from(formData));
-      // reader.onload = () =>{
-
-      // }
-      // setCurrentRecipe((item) => ({ ...item, [name]: filesValue }));
-    } else {
-      setCurrentRecipe((item) => ({ ...item, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setCurrentRecipe((item) => ({ ...item, [name]: value }));
   };
 
   const addRecipe = async (recipe) => {
@@ -172,42 +157,26 @@ const CreateRecipe = () => {
         formData.append(key, element);
       }
     }
+
     for (let item of formData) {
       console.log(item);
     }
 
     try {
-      // const res = await axios.post(
-      //   "/recipes/62fd90c4eb21e594a0f45bc9",
-      //   JSON.stringify({
-      //     title: recipe.title,
-      //     mainImg: recipe.mainImg,
-      //     ingredients: recipe.ingredients,
-      //     instructions: recipe.instructions,
-      //     recipesImgs: recipe.recipesImgs,
-      //     recipesVideos: recipe.recipesVideos,
-      //     genre: recipe.genre,
-      //   }),
-      //   {
-      //     headers: {
-      //       "content-type": "application/json",
-      //       Authorization: `${auth.token}`,
-      //     },
-      //   }
-      // );
       const resFiles = await axios.post(
         "/recipes/62fd90c4eb21e594a0f45bc9",
         formData,
         {
           headers: {
             "content-type": "multipart/form-data",
-            // "content-type": "application/json",
             Authorization: `${auth.token}`,
           },
         }
       );
       console.log(resFiles);
       setRecipes((recipes) => [...recipes, { ...recipe }]);
+      navigate("/myRecipes");
+
       console.log(recipes);
       // getRecipes();
     } catch (error) {
@@ -247,7 +216,6 @@ const CreateRecipe = () => {
                 className="d-none"
                 type="file"
                 name="mainImg"
-                // value={currentRecipe.mainImg}
                 onChange={mainImgSelectHandeler}
                 accept="image/*"
               />
@@ -298,11 +266,6 @@ const CreateRecipe = () => {
                 type="file"
                 name="recipesImgs"
                 onChange={imgsSelectHandeler}
-                // value={currentRecipe.recipesImgs}
-                // onChange={(e) => {
-                //   imgsSelectHandeler(e);
-                //   handleChangeValue(e);
-                // }}
                 multiple
                 accept="image/*"
               />
