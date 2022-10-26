@@ -1,4 +1,5 @@
-import * as React from "react";
+import dateFormat from "dateformat";
+
 import {
   Card,
   CardHeader,
@@ -14,7 +15,7 @@ import { Link } from "react-router-dom";
 
 const RecipeCard = (props) => {
   let { item } = props;
-  const text = item.ingredients + item.instructions;
+  const text = item?.ingredients + item?.instructions;
 
   //   content.With supporting text below as a natural lead-in to additional
   //   content.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
@@ -25,14 +26,14 @@ const RecipeCard = (props) => {
   //   magni minus ullam. Porro.`;
   return (
     <div className="m-auto m-md-0 col-md-6 col-lg-4 p-3">
-      <Link to={`/recipe/${item._id}`}>
+      <Link to={`/recipe/${item?._id}`}>
         <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
           <CardHeader
             avatar={
               <Avatar>
                 <img
                   className="userImg"
-                  src={`${process.env.REACT_APP_BASE_URL}${item.createdBy.userImg}`}
+                  src={`${process.env.REACT_APP_BASE_URL}${item?.createdBy.userImg}`}
                   alt="avatar"
                 />
               </Avatar>
@@ -42,19 +43,19 @@ const RecipeCard = (props) => {
                 <FavoriteIcon />
               </IconButton>
             }
-            title={item.createdBy.username}
-            subheader={item.createdAt}
+            title={item?.createdBy.username}
+            subheader={dateFormat(item?.createdAt, "dd mmmm yyyy")}
           />
           <CardMedia
             component="img"
             height="194"
-            image={`${process.env.REACT_APP_BASE_URL}${item.recipeMainImg}`}
+            image={`${process.env.REACT_APP_BASE_URL}${item?.recipeMainImg}`}
             alt="Recipe Main Image"
           />
           <CardContent>
-            <h5>{item.title}</h5>
+            <h5>{item?.title}</h5>
             <Typography variant="body2" color="text.secondary">
-              {text.substring(0, 200)}....
+              {/* {text?.substring(0, 200)}.... */}
             </Typography>
           </CardContent>
         </Card>

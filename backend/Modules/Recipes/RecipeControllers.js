@@ -74,14 +74,21 @@ const addNew = async (req, res, next) => {
     const { id } = req.params;
 
     if (req.userPayload.id === id) {
-      const { title, rate, ingredients, instructions, createdAt, genre } =
-        req.body;
+      const {
+        title,
+        rate,
+        ingredients,
+        instructions,
+        createdAt,
+        recipeMainImg,
+        genre,
+      } = req.body;
 
-      let recipeMainImg = "";
       let recipesImgs = [];
       let recipesVideos = [];
 
       if (req.files) {
+        // let recipeMainImg = "";
         const { mainImg, uploadedImgs, uploadedVideos } = req.files;
         if (mainImg) recipeMainImg = mainImg[0].path;
         if (uploadedImgs)

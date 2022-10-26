@@ -1,4 +1,3 @@
-import logo from "./../logo.svg";
 import { useContext, useEffect } from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -30,7 +29,7 @@ const Home = () => {
     getRecipes();
   }, []);
 
-  // console.log(recipes);
+  console.log(recipes);
 
   return (
     <>
