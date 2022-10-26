@@ -16,7 +16,8 @@ import {
 
 const NavbarComp = () => {
   const { auth, setAuth } = useAuth();
-  console.log(auth);
+  // console.log(auth);
+
   const UserInfo = (
     <div className="d-flex">
       <p className="m-0">User Name</p>

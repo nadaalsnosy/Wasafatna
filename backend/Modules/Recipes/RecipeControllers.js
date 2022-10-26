@@ -1,5 +1,4 @@
 const Recipe = require("./RecipeModel");
-const User = require("../Users/UserModel");
 
 const fs = require("fs");
 
@@ -22,7 +21,11 @@ const getAll = async (req, res, next) => {
       })
         .limit(limit)
         .skip(page * limit)
-        .sort(sortBy);
+        .sort(sortBy)
+        .populate({
+          path: "createdBy",
+          select: ["username", "userImg"],
+        });
       res.send(recipes);
     } else {
       const recipes = await Recipe.find({
@@ -30,7 +33,11 @@ const getAll = async (req, res, next) => {
       })
         .limit(limit)
         .skip(page * limit)
-        .sort(sortBy);
+        .sort(sortBy)
+        .populate({
+          path: "createdBy",
+          select: ["username", "userImg"],
+        });
       res.send(recipes);
     }
   } catch (error) {
@@ -213,7 +220,10 @@ const deleteOne = async (req, res, next) => {
 const getOne = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const recipe = await Recipe.findById(id);
+    const recipe = await Recipe.findById(id).populate({
+      path: "createdBy",
+      select: ["username", "userImg"],
+    });
     res.send(recipe);
   } catch (error) {
     error.statusCode = 403;

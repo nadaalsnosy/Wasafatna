@@ -9,8 +9,8 @@ const UserRecipes = () => {
     <>
       <AnimatedPage>
         <div className="container">
-          <div className="d-flex flex-column justify-content-between align-items-baseline flex-md-row">
-            <h1 className="fs-45 text-start my-5 mx-2 text-success">
+          <div className="d-flex flex-column justify-content-between align-items-md-baseline flex-md-row">
+            <h1 className="fs-45 text-start m-auto my-5 mx-md-2 text-success">
               My Recipes
             </h1>
             <Link to={"/createRecipe"}>

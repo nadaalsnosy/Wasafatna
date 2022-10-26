@@ -33,11 +33,6 @@ recipeRouter.post(
       maxCount: 30,
     },
   ]),
-  // upload.array("uploadedImgs", 30),
-  // upload.single("mainImg"),
-  // upload.array("uploadedFiles", 30),
-  // upload.array("uploadedVideos", 30),
-
   verifyToken,
   addNew
 );

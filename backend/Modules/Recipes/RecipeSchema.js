@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+// const User = require("../Users/UserModel");
+
 const { Schema } = mongoose;
 const RecipeSchema = new Schema({
   title: {
@@ -7,7 +9,7 @@ const RecipeSchema = new Schema({
   },
   recipeMainImg: {
     type: String,
-    default: "uploads\\recipeImage\\foodIcon.png",
+    default: "images\\foodIcon.png",
   },
   rate: {
     type: Number,
@@ -43,7 +45,8 @@ const RecipeSchema = new Schema({
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    // type: Schema.ObjectId,
+    ref: "Users",
   },
 });
 

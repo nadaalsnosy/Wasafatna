@@ -37,7 +37,7 @@ const RecipesModule = () => {
       console.log(error);
     }
   };
-
+  // getRecipes();
   const contextValue = useMemo(
     () => ({
       getRecipes,
@@ -46,7 +46,7 @@ const RecipesModule = () => {
       filterRecipes,
       setFilterRecipes,
     }),
-    [getRecipes, recipes, setRecipes,filterRecipes,setFilterRecipes]
+    [getRecipes, recipes, setRecipes, filterRecipes, setFilterRecipes]
   );
 
   return (
@@ -55,7 +55,7 @@ const RecipesModule = () => {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<Home />} />
         <Route path="*" element={<NotFound />} />
-        <Route path="/recipe" element={<Recipe />} />
+        <Route path="/recipe/:id" element={<Recipe />} />
 
         {/* <Route element={<RequireAuth />}> */}
         <Route path="/profile" element={<Profile />} />

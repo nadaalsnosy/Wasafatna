@@ -11,26 +11,30 @@ import {
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Link } from "react-router-dom";
-import img1 from "../images/image1.jpg";
-import img2 from "../images/image2.jpg";
 
-const RecipeCard = () => {
-  let text = `With supporting text below as a natural lead-in to additional
-    content.With supporting text below as a natural lead-in to additional
-    content.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-    Nisi quia, quasi error temporibus cumque facere totam excepturi corporis
-    obcaecati assumenda est tempore deserunt amet sed. Facere, provident?
-    A architecto unde nisi eius harum numquam voluptates sapiente possimus
-    explicabo dolore nemo atque ducimus ea, labore voluptatibus excepturi
-    magni minus ullam. Porro.`;
+const RecipeCard = (props) => {
+  let { item } = props;
+  const text = item.ingredients + item.instructions;
+
+  //   content.With supporting text below as a natural lead-in to additional
+  //   content.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+  //   Nisi quia, quasi error temporibus cumque facere totam excepturi corporis
+  //   obcaecati assumenda est tempore deserunt amet sed. Facere, provident?
+  //   A architecto unde nisi eius harum numquam voluptates sapiente possimus
+  //   explicabo dolore nemo atque ducimus ea, labore voluptatibus excepturi
+  //   magni minus ullam. Porro.`;
   return (
     <div className="m-auto m-md-0 col-md-6 col-lg-4 p-3">
-      <Link to={"/recipe"}>
+      <Link to={`/recipe/${item._id}`}>
         <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
           <CardHeader
             avatar={
               <Avatar>
-                <img className="userImg" src={img2} alt="avatar" />
+                <img
+                  className="userImg"
+                  src={`${process.env.REACT_APP_BASE_URL}${item.createdBy.userImg}`}
+                  alt="avatar"
+                />
               </Avatar>
             }
             action={
@@ -38,17 +42,17 @@ const RecipeCard = () => {
                 <FavoriteIcon />
               </IconButton>
             }
-            title="Shrimp and Chorizo Paella"
-            subheader="September 14, 2016"
+            title={item.createdBy.username}
+            subheader={item.createdAt}
           />
           <CardMedia
             component="img"
             height="194"
-            image={img1}
-            alt="Paella dish"
+            image={`${process.env.REACT_APP_BASE_URL}${item.recipeMainImg}`}
+            alt="Recipe Main Image"
           />
           <CardContent>
-            <h5>Recipe Name</h5>
+            <h5>{item.title}</h5>
             <Typography variant="body2" color="text.secondary">
               {text.substring(0, 200)}....
             </Typography>

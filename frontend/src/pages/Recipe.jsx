@@ -1,12 +1,35 @@
+import { useState, useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import axios from "../api/axios";
+
 import { Button } from "@mui/material";
-import React from "react";
-import { Link } from "react-router-dom";
 import AnimatedPage from "../components/AnimatedPage";
+
 import MainImg from "../images/foodIcon.png";
 import TestVideo from "../images/testVideo.mp4";
 
 const Recipe = () => {
-  console.log(MainImg);
+  const { id } = useParams();
+  const [recipe, setRecipe] = useState();
+
+  const getRecipe = async () => {
+    try {
+      const res = await axios.get(`/recipes/${id}`);
+      setRecipe(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(recipe);
+
+  useEffect(() => {
+    // if (auth.token) {
+    getRecipe();
+    // }
+  }, []);
+
+  console.log(id);
   return (
     <>
       <AnimatedPage>
@@ -16,89 +39,71 @@ const Recipe = () => {
               Home
             </Link>{" "}
             /{" "}
-            <Link className="text-placeholder" to={"/"}>
-              Genre
+            <Link className="text-placeholder text-capitalize" to={"/"}>
+              {recipe?.genre}
             </Link>
           </p>
-          <h1 className="fs-1 text-start mt-4 mb-5 mx-2 text-success">
-            Recipe Title
+          <h1 className="fs-1 text-start mt-4 mb-5 mx-2 text-capitalize text-success">
+            {recipe?.title}
           </h1>
           <img
-            className="max-w-460"
-            src={MainImg}
-            alt={MainImg.substring(14).replace(/[.]/g, "")}
+            className="max-h-400"
+            src={`${process.env.REACT_APP_BASE_URL}${recipe?.recipeMainImg}`}
+            alt={recipe?.recipeMainImg.substring(14).replace(/[.]/g, "")}
           />
           <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
             Ingredients
           </h2>
           <p className="text-start">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
-            culpa eos cupiditate explicabo, non aperiam dolorem error? Quia quos
-            sunt repellendus nobis? Nulla non dolore earum, nesciunt sed magni
-            ut tempora rem minima enim dolorum, cumque porro explicabo modi,
-            magnam maiores in deleniti necessitatibus? Quibusdam eligendi
-            temporibus non distinctio quos?
+            {recipe?.ingredients
+              ? recipe.ingredients
+              : "No ingredients specified"}
           </p>
           <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
             Instructions
           </h2>
           <p className="text-start">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
-            culpa eos cupiditate explicabo, non aperiam dolorem error? Quia quos
-            sunt repellendus nobis? Nulla non dolore earum, nesciunt sed magni
-            ut tempora rem minima enim dolorum, cumque porro explicabo modi,
-            magnam maiores in deleniti necessitatibus? Quibusdam eligendi
-            temporibus non distinctio quos?
+            {recipe?.instructions
+              ? recipe.instructions
+              : "No instructions specified"}
           </p>
-          <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
-            Images
-          </h2>
-          <div className="d-flex flex-wrap">
-            <div className="col-md-6 p-2">
-              <img
-                src={MainImg}
-                alt={MainImg.substring(14).replace(/[.]/g, "")}
-              />
-            </div>
-            <div className="col-md-6 p-2">
-              <img
-                src={MainImg}
-                alt={MainImg.substring(14).replace(/[.]/g, "")}
-              />
-            </div>
-            <div className="col-md-6 p-2">
-              <img
-                src={MainImg}
-                alt={MainImg.substring(14).replace(/[.]/g, "")}
-              />
-            </div>
-            <div className="col-md-6 p-2">
-              <img
-                src={MainImg}
-                alt={MainImg.substring(14).replace(/[.]/g, "")}
-              />
-            </div>
-          </div>
-          <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
-            Videos
-          </h2>
-          <div className="d-flex flex-wrap">
-            <div className="col-12 col-md-6 p-2">
-              <video controls>
-                <source src={TestVideo} type="video/mp4" />
-              </video>
-            </div>
-            <div className="col-12 col-md-6 p-2">
-              <video controls>
-                <source src={TestVideo} type="video/mp4" />
-              </video>
-            </div>
-            <div className="col-12 col-md-6 p-2">
-              <video controls>
-                <source src={TestVideo} type="video/mp4" />
-              </video>
-            </div>
-          </div>
+          {recipe?.recipesImgs && (
+            <>
+              <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
+                Images
+              </h2>
+              <div className="d-flex flex-wrap">
+                {recipe.recipesImgs.map((itemImg) => (
+                  <div className="col-12 col-md-6 p-2 h-280" key={itemImg}>
+                    <img
+                      src={`${process.env.REACT_APP_BASE_URL}${itemImg}`}
+                      alt={itemImg.substring(14).replace(/[.]/g, "")}
+                    />
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+          {recipe?.recipesVideos && (
+            <>
+              <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
+                Videos
+              </h2>
+              <div className="d-flex flex-wrap">
+                {recipe.recipesVideos.map((itemVideo) => (
+                  <div className="col-12 col-md-6 p-2 h-280" key={itemVideo}>
+                    <video controls>
+                      <source
+                        src={`${process.env.REACT_APP_BASE_URL}${itemVideo}`}
+                        type="video/mp4"
+                      />
+                    </video>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
           <Link to={"/editRecipe/id"}>
             <Button
               className="d-block ms-auto me-3 my-3 "

@@ -50,9 +50,19 @@
 }
 // ...........................................................
 
+//height
+.h-280 {
+  height: 280px !important;
+}
+.max-h-400 {
+  max-height: 400px !important;
+}
+// ...........................................................
+
 //tag
 img,
 video {
+  height: 100%;
   width: 100%;
   transition: 0.7s ease;
 }
@@ -122,6 +132,7 @@ a:hover img {
   width: fit-content !important;
   height: fit-content !important;
 }
+// ...........................................................
 
 @media (min-width: 992px) {
   .max-w-900 {

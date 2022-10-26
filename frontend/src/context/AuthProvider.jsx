@@ -11,13 +11,13 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const localAuth = localStorage.getItem("user");
-    console.log(localAuth);
+    // console.log(localAuth);
     if (localAuth) {
       setAuth(JSON.parse(localAuth));
     }
   }, [setAuth]);
 
-  console.log(auth);
+  // console.log(auth);
   useEffect(() => {
     if (auth) localStorage.setItem("user", JSON.stringify(auth));
   }, [auth]);
