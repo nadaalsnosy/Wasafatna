@@ -14,9 +14,11 @@ import {
   Form,
   FormControl,
 } from "react-bootstrap";
+import { useEffect, useState } from "react";
 
 const NavbarComp = () => {
   const { auth, setAuth } = useAuth();
+  // const [UserInfo, setUserInfo] = useState();
   // console.log(auth);
 
   const UserInfo = (
@@ -37,6 +39,11 @@ const NavbarComp = () => {
       </div>
     </div>
   );
+
+  // useEffect(() => {
+  //   setUserInfo(UserData);
+  // }, [auth]);
+
   const handleLogOut = async (e) => {
     try {
       localStorage.removeItem("user");

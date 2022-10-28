@@ -1,5 +1,5 @@
 import { Routes, Route, useLocation } from "react-router-dom";
-import { useMemo, createContext, useState } from "react";
+import { useMemo, createContext, useState, useEffect } from "react";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -20,7 +20,7 @@ export const RecipesContext = createContext();
 
 const RecipesModule = () => {
   const location = useLocation();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [recipe, setRecipe] = useState();
   const [filterRecipes, setFilterRecipes] = useState([]);
@@ -38,6 +38,10 @@ const RecipesModule = () => {
       console.log(error);
     }
   };
+
+  // useEffect(() => {
+  //   setAuth(auth);
+  // }, [auth]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getRecipe = async (id) => {

@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 
-import axios from "../api/axios";
+// import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
+
+import { Modal } from "react-bootstrap";
 
 import {
   Table,
@@ -14,26 +16,36 @@ import {
 } from "@mui/material";
 import { Form } from "react-bootstrap";
 
-const defaultVall = {
-  username: "",
-  email: "",
-  password: "",
-};
-
 const ProfileInfo = (props) => {
-  const { user } = props;
-  const { auth } = useAuth();
+  const {
+    user,
+    handleSubmit,
+    saveUser,
+    setValidated,
+    setMatchPassword,
+    setMatchEmail,
+    matchPassword,
+    matchEmail,
+    validated,
+    editCond,
+    setEditCond,
+  } = props;
+
+  console.log(props);
+  // const { auth, setAuth } = useAuth();
 
   const fakePassword = "***************";
   const emailRGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
   const passwordRGEX =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 
-  // console.log(user);
-  const [editCond, setEditCond] = useState(false);
-  const [validated, setValidated] = useState(false);
-  const [matchEmail, setMatchEmail] = useState(false);
-  const [matchPassword, setMatchPassword] = useState(false);
+  const [fullscreen, setFullscreen] = useState(true);
+  const [show, setShow] = useState(false);
+
+  function handleShow(breakpoint) {
+    setFullscreen(breakpoint);
+    setShow(true);
+  }
 
   const [currentUser, setCurrentUser] = useState(user);
 
@@ -72,65 +84,12 @@ const ProfileInfo = (props) => {
     setCurrentUser((item) => ({ ...item, [name]: value }));
   };
 
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    event.preventDefault();
-
-    if (!form.checkValidity() === false) {
-      if (!matchEmail && !matchPassword) {
-        // setEditCond(false);
-        saveUser(currentUser);
-      }
-    } else {
-      setValidated(true);
-    }
-  };
-
-  const saveUser = async (updatedUser) => {
-    const formData = new FormData();
-
-    for (const key in updatedUser) {
-      if (Object.hasOwnProperty.call(updatedUser, key)) {
-        const element = updatedUser[key];
-
-        if (element !== user[key]) {
-          formData.append(key, element);
-        }
-      }
-    }
-
-    for (let item of formData) {
-      console.log(item);
-    }
-
-    const formDataLength = Array.from(formData.keys()).length;
-    if (formDataLength !== 0) {
-      console.log("goo");
-      try {
-        const resFiles = await axios.patch(`/users/`, formData, {
-          headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `${auth.token}`,
-          },
-        });
-        console.log(resFiles);
-        auth.user = resFiles.data;
-        localStorage.setItem("user", JSON.stringify(auth));
-        setEditCond(false);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      setEditCond(false);
-    }
-  };
-
   return (
     <div className="container me-xl-5 pe-xl-5 my-3">
       <Form
         noValidate
         validated={validated}
-        onSubmit={handleSubmit}
+        onSubmit={(e) => handleSubmit(e, currentUser)}
         className="container text-start mw-840"
       >
         <TableContainer component={Paper}>
@@ -219,31 +178,42 @@ const ProfileInfo = (props) => {
 
                 <TableCell className="text-left" align="right">
                   {editCond ? (
-                    <Form.Group
-                      className={``}
-                      controlId={`formGrid-user-password`}
+                    <Button
+                      className="d-block text-capitalize"
+                      variant="outlined"
+                      color="success"
+                      onClick={() => handleShow("sm-down")}
                     >
-                      <Form.Control
-                        // className="passInput fs-7"
-                        className={`passInput fs-7 ${
-                          matchPassword && `inputValidation`
-                        } `}
-                        name="password"
-                        type="password"
-                        placeholder={`Enter Password`}
-                        value={currentUser.password}
-                        onChange={handleChangeValue}
-                        required
-                        aria-describedby="userConfirmPassword"
-                      />
-                      <Form.Control.Feedback
-                        className={`${matchPassword && `d-block`}`}
-                        type="invalid"
-                      >
-                        Please provide all character types.
-                      </Form.Control.Feedback>
-                    </Form.Group>
+                      Change Password
+                    </Button>
                   ) : (
+                    // <>
+                    //   <Form.Group
+                    //     className={``}
+                    //     controlId={`formGrid-user-password`}
+                    //   >
+                    //     <Form.Control
+                    //       // className="passInput fs-7"
+                    //       className={`passInput fs-7 ${
+                    //         matchPassword && `inputValidation`
+                    //       } `}
+                    //       name="password"
+                    //       type="password"
+                    //       placeholder={`Enter Password`}
+                    //       value={currentUser.password}
+                    //       onChange={handleChangeValue}
+                    //       required
+                    //       aria-describedby="userConfirmPassword"
+                    //     />
+                    //     <Form.Control.Feedback
+                    //       className={`${matchPassword && `d-block`}`}
+                    //       type="invalid"
+                    //     >
+                    //       Please provide all character types.
+                    //     </Form.Control.Feedback>
+                    //   </Form.Group>
+                    // </>
+
                     <p className={`text-capitalize mb-0`}>{fakePassword}</p>
                   )}
                 </TableCell>
@@ -275,6 +245,49 @@ const ProfileInfo = (props) => {
           </Button>
         )}
       </Form>
+      <>
+        <Modal
+          // show={modalShow}
+          // onHide={() => setModalShow(false)}
+          show={show}
+          fullscreen={fullscreen}
+          onHide={() => setShow(false)}
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-vcenter">
+              Modal heading
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlInput1"
+              >
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="email"
+                  placeholder="name@example.com"
+                  autoFocus
+                />
+              </Form.Group>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlTextarea1"
+              >
+                <Form.Label>Example textarea</Form.Label>
+                <Form.Control as="textarea" rows={3} />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={() => setShow(false)}>Close</Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     </div>
   );
 };

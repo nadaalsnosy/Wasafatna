@@ -111,15 +111,15 @@ const updateUser = async (req, res, next) => {
         : [...user.userList, userListItem];
     }
 
-    if (req.files?.userImg) {
+    if (req.file) {
       if (
-        req.files.userImg.mimetype === "image/jpeg" ||
-        req.files.userImg.mimetype === "image/png"
+        req.file.mimetype === "image/jpeg" ||
+        req.file.mimetype === "image/png"
       ) {
         if (user.userImg) {
-          fs.unlinkSync(userImg);
+          fs.unlinkSync(user.userImg);
         }
-        user.userImg = req.files.userImg.path;
+        user.userImg = req.file.path;
       } else {
         throw new Error(`You must add jpeg or png only!`);
       }
