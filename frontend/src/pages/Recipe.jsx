@@ -1,36 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import dateFormat from "dateformat";
 
 import { Button, CardHeader, Avatar } from "@mui/material";
 
 import axios from "../api/axios";
-import AnimatedPage from "../components/AnimatedPage";
+import useAuth from "../hooks/useAuth";
 
-// import MainImg from "../images/foodIcon.png";
-// import TestVideo from "../images/testVideo.mp4";
+import AnimatedPage from "../components/AnimatedPage";
+import { RecipesContext } from "../context/RecipesModule";
+
+import recipeDefultImg from "../images/foodIcon.png";
+import userDefultImg from "../images/userIcon.png";
 
 const Recipe = () => {
-  const { id } = useParams();
-  const [recipe, setRecipe] = useState();
+  const { auth } = useAuth();
 
-  const getRecipe = async () => {
-    try {
-      const res = await axios.get(`/recipes/${id}`);
-      setRecipe(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const { id } = useParams();
+  const { recipe, getRecipe } = useContext(RecipesContext);
+  console.log(recipe?.recipeImgs?.length);
 
   console.log(recipe);
-  console.log(recipe?.recipesVideos.length);
 
   useEffect(() => {
-    getRecipe();
+    getRecipe(id);
   }, []);
 
-  console.log(id);
   return (
     <>
       <AnimatedPage>
@@ -47,50 +42,65 @@ const Recipe = () => {
           <CardHeader
             className="recipeUserInfo"
             avatar={
-              <Avatar>
-                <img
-                  className="userImg"
-                  src={`${process.env.REACT_APP_BASE_URL}${recipe?.createdBy.userImg}`}
-                  alt="avatar"
-                />
-              </Avatar>
+              <Link to={`/userRecipes/${recipe?.createdBy?._id}`}>
+                <Avatar>
+                  <img
+                    className="userImg"
+                    src={
+                      recipe?.createdBy?.userImg
+                        ? `${process.env.REACT_APP_BASE_URL}${recipe?.createdBy.userImg}`
+                        : userDefultImg
+                    }
+                    alt="avatar"
+                  />
+                </Avatar>
+              </Link>
             }
-            title={recipe?.createdBy.username}
+            title={recipe?.createdBy?.username}
             subheader={dateFormat(recipe?.createdAt, "dd mmmm yyyy")}
           />
           <h1 className="fs-1 text-center mt-4 mb-3 mx-2 text-capitalize text-success">
             {recipe?.title}
           </h1>
           <img
-            className="max-h-400"
-            src={`${process.env.REACT_APP_BASE_URL}${recipe?.recipeMainImg}`}
-            alt={recipe?.recipeMainImg.substring(14).replace(/[.]/g, "")}
+            className="max-h-400 border-green-5"
+            src={
+              recipe?.recipeMainImg
+                ? `${process.env.REACT_APP_BASE_URL}${recipe?.recipeMainImg}`
+                : recipeDefultImg
+            }
+            alt="Recipe MainImage"
           />
           <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
             Ingredients
           </h2>
-          <p className="text-start">
+          <pre className="text-start fs-6">
             {recipe?.ingredients
               ? recipe.ingredients
+                  .replace(/^/, `\u2022 `)
+                  .replace(/\r\n/g, "\r\n\u2022 ")
               : "No ingredients specified"}
-          </p>
+          </pre>
           <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
             Instructions
           </h2>
-          <p className="text-start">
+          <pre className="text-start fs-6">
             {recipe?.instructions
               ? recipe.instructions
+                  .replace(/^/, `\u2022 `)
+                  .replace(/\r\n/g, "\r\n\u2022 ")
               : "No instructions specified"}
-          </p>
+          </pre>
           <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
             Images
           </h2>
-          {recipe?.recipesImgs.length ? (
+          {recipe?.recipeImgs?.length ? (
             <>
               <div className="d-flex flex-wrap">
-                {recipe.recipesImgs.map((itemImg) => (
+                {recipe.recipeImgs.map((itemImg) => (
                   <div className="col-12 col-md-6 p-2 h-280" key={itemImg}>
                     <img
+                      className="border-green-5 h-100"
                       src={`${process.env.REACT_APP_BASE_URL}${itemImg}`}
                       alt={itemImg.substring(14).replace(/[.]/g, "")}
                     />
@@ -104,12 +114,12 @@ const Recipe = () => {
           <h2 className="fs-3 text-start mt-5 mb-3 mx-2 text-success">
             Videos
           </h2>
-          {recipe?.recipesVideos.length ? (
+          {recipe?.recipeVideos?.length ? (
             <>
               <div className="d-flex flex-wrap">
-                {recipe.recipesVideos.map((itemVideo) => (
+                {recipe.recipeVideos.map((itemVideo) => (
                   <div className="col-12 col-md-6 p-2 h-280" key={itemVideo}>
-                    <video controls>
+                    <video className="border-green-5 h-100" controls>
                       <source
                         src={`${process.env.REACT_APP_BASE_URL}${itemVideo}`}
                         type="video/mp4"
@@ -122,17 +132,18 @@ const Recipe = () => {
           ) : (
             <p className="text-start">No Videos have been added</p>
           )}
-
-          <Link to={`/editRecipe/${recipe?._id}`}>
-            <Button
-              className="d-block ms-auto me-3 my-3 "
-              variant="contained"
-              color="success"
-              // onClick={handleChangeEditCond}
-            >
-              Edit
-            </Button>
-          </Link>
+          {auth?.user?._id === recipe?.createdBy?._id && (
+            <Link to={`/editRecipe/${recipe?._id}`}>
+              <Button
+                className="d-block ms-auto me-3 my-3 "
+                variant="contained"
+                color="success"
+                // onClick={handleChangeEditCond}
+              >
+                Edit
+              </Button>
+            </Link>
+          )}
         </div>
       </AnimatedPage>
     </>

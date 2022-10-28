@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 import Logo from "../images/wasafatnaCircle.png";
+import userDefultImg from "../images/userIcon.png";
 
 import {
   Navbar,
@@ -20,9 +21,19 @@ const NavbarComp = () => {
 
   const UserInfo = (
     <div className="d-flex">
-      <p className="m-0">User Name</p>
+      <p className="m-0 text-capitalize">
+        {auth?.user?.username ? `${auth?.user?.username}` : "User Name"}
+      </p>
       <div className="userImgContainer">
-        <img className="userImg" src={Logo} alt="avatar" />
+        <img
+          className="userImg"
+          src={
+            auth?.user?.userImg
+              ? `${process.env.REACT_APP_BASE_URL}${auth?.user?.userImg}`
+              : userDefultImg
+          }
+          alt="avatar"
+        />
       </div>
     </div>
   );
@@ -80,7 +91,10 @@ const NavbarComp = () => {
                     <Link className="dropdown-item" to={"favourite"}>
                       Favourite
                     </Link>
-                    <Link className="dropdown-item" to={"myRecipes"}>
+                    <Link
+                      className="dropdown-item"
+                      to={`userRecipes/${auth.user._id}`}
+                    >
                       My Recipes
                     </Link>
 

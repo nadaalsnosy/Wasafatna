@@ -14,7 +14,7 @@ import Recipe from "../pages/Recipe";
 import Profile from "../pages/Profile";
 import Favourite from "../pages/Favourite";
 import UserRecipes from "../pages/UserRecipes";
-import CreateRecipe from "../pages/CreateRecipe";
+import SaveRecipe from "../pages/SaveRecipe";
 
 export const RecipesContext = createContext();
 
@@ -22,6 +22,7 @@ const RecipesModule = () => {
   const location = useLocation();
   const { auth } = useAuth();
   const [recipes, setRecipes] = useState([]);
+  const [recipe, setRecipe] = useState();
   const [filterRecipes, setFilterRecipes] = useState([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,16 +38,38 @@ const RecipesModule = () => {
       console.log(error);
     }
   };
-  // getRecipes();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getRecipe = async (id) => {
+    try {
+      const res = await axios.get(`/recipes/${id}`);
+      setRecipe(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const contextValue = useMemo(
     () => ({
+      getRecipe,
+      recipe,
+      setRecipe,
       getRecipes,
       recipes,
       setRecipes,
       filterRecipes,
       setFilterRecipes,
     }),
-    [getRecipes, recipes, setRecipes, filterRecipes, setFilterRecipes]
+    [
+      getRecipe,
+      recipe,
+      setRecipe,
+      getRecipes,
+      recipes,
+      setRecipes,
+      filterRecipes,
+      setFilterRecipes,
+    ]
   );
 
   return (
@@ -60,9 +83,9 @@ const RecipesModule = () => {
         {/* <Route element={<RequireAuth />}> */}
         <Route path="/profile" element={<Profile />} />
         <Route path="/favourite" element={<Favourite />} />
-        <Route path="/myRecipes" element={<UserRecipes />} />
-        <Route path="/createRecipe" element={<CreateRecipe />} />
-        <Route path="/editRecipe/:id" element={<CreateRecipe />} />
+        <Route path="/userRecipes/:id" element={<UserRecipes />} />
+        <Route path="/saveRecipe" element={<saveRecipe />} />
+        <Route path="/editRecipe/:id" element={<saveRecipe />} />
 
         {/* </Route> */}
       </Routes>

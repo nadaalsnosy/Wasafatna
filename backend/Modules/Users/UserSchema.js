@@ -26,14 +26,11 @@ const userSchema = new Schema({
   },
   userImg: {
     type: String,
-    default: "uploads\\usersImage\\userIcon.png"
   },
   userList: {
     type: Array,
   },
-  userFavourite: {
-    type: Array,
-  },
+
   isAdmin: {
     type: Boolean,
     default: false,

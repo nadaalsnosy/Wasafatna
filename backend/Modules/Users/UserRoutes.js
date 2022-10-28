@@ -13,7 +13,7 @@ const upload = require("../Uploads");
 
 //get all for admin only
 userRouter.get("/", verifyToken, getUsers);
-userRouter.get("/:id", verifyToken, profile);
+userRouter.get("/profile", verifyToken, profile);
 //
 userRouter.post(
   "/signUp",
@@ -25,7 +25,7 @@ userRouter.post(
 userRouter.post("/signIn", login);
 //update
 userRouter.patch(
-  "/:id",
+  "/",
   verifyToken,
   validate,
   passwordHash,

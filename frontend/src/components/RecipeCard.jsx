@@ -1,4 +1,6 @@
 import dateFormat from "dateformat";
+import recipeDefultImg from "../images/foodIcon.png";
+import userDefultImg from "../images/userIcon.png";
 
 import {
   Card,
@@ -16,50 +18,56 @@ import { Link } from "react-router-dom";
 const RecipeCard = (props) => {
   let { item } = props;
   const text = item?.ingredients + item?.instructions;
-
-  //   content.With supporting text below as a natural lead-in to additional
-  //   content.Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-  //   Nisi quia, quasi error temporibus cumque facere totam excepturi corporis
-  //   obcaecati assumenda est tempore deserunt amet sed. Facere, provident?
-  //   A architecto unde nisi eius harum numquam voluptates sapiente possimus
-  //   explicabo dolore nemo atque ducimus ea, labore voluptatibus excepturi
-  //   magni minus ullam. Porro.`;
+  const defultText =
+    "may this content contains images or videos could help you";
   return (
     <div className="m-auto m-md-0 col-md-6 col-lg-4 p-3">
-      <Link to={`/recipe/${item?._id}`}>
-        <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
-          <CardHeader
-            avatar={
+      <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
+        <CardHeader
+          avatar={
+            <Link to={`/userRecipes/${item?.createdBy?._id}`}>
               <Avatar>
                 <img
                   className="userImg"
-                  src={`${process.env.REACT_APP_BASE_URL}${item?.createdBy.userImg}`}
+                  src={
+                    item?.createdBy?.userImg
+                      ? `${process.env.REACT_APP_BASE_URL}${item?.createdBy.userImg}`
+                      : userDefultImg
+                  }
                   alt="avatar"
                 />
               </Avatar>
-            }
-            action={
-              <IconButton aria-label="add to favorites">
-                <FavoriteIcon />
-              </IconButton>
-            }
-            title={item?.createdBy.username}
-            subheader={dateFormat(item?.createdAt, "dd mmmm yyyy")}
-          />
+            </Link>
+          }
+          action={
+            <IconButton aria-label="add to favorites">
+              <FavoriteIcon />
+            </IconButton>
+          }
+          title={
+            <p className="text-capitalize m-0">{item?.createdBy?.username}</p>
+          }
+          subheader={dateFormat(item?.createdAt, "dd mmmm yyyy")}
+        />
+        <Link to={`/recipe/${item?._id}`}>
           <CardMedia
             component="img"
             height="194"
-            image={`${process.env.REACT_APP_BASE_URL}${item?.recipeMainImg}`}
+            image={
+              item?.recipeMainImg
+                ? `${process.env.REACT_APP_BASE_URL}${item?.recipeMainImg}`
+                : recipeDefultImg
+            }
             alt="Recipe Main Image"
           />
           <CardContent>
             <h5>{item?.title}</h5>
             <Typography variant="body2" color="text.secondary">
-              {/* {text?.substring(0, 200)}.... */}
+              {text ? `${text?.substring(0, 200)}...` : defultText}
             </Typography>
           </CardContent>
-        </Card>
-      </Link>
+        </Link>
+      </Card>
     </div>
   );
 };

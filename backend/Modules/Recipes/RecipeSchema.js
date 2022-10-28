@@ -9,12 +9,11 @@ const RecipeSchema = new Schema({
   },
   recipeMainImg: {
     type: String,
-    default: "images\\foodIcon.png",
   },
   rate: {
     type: Number,
   },
-  recipesImgs: {
+  recipeImgs: {
     type: Array,
   },
   ingredients: {
@@ -23,7 +22,7 @@ const RecipeSchema = new Schema({
   instructions: {
     type: String,
   },
-  recipesVideos: {
+  recipeVideos: {
     type: Array,
   },
   createdAt: {

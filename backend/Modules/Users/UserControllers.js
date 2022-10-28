@@ -20,8 +20,14 @@ const signUp = async (req, res, next) => {
       }
     }
 
+    const { id: uID } = newUser;
+    const token = await asynSign(
+      { id: uID, isAdmin: newUser.isAdmin },
+      process.env.SECRET_KEY
+    );
+
     const createdUser = await newUser.save();
-    res.send(createdUser);
+    res.send({ token, createdUser });
   } catch (error) {
     error.statusCode = 500;
     next(error);
@@ -47,7 +53,7 @@ const login = async (req, res, next) => {
       { id: uID, isAdmin: user.isAdmin },
       process.env.SECRET_KEY
     );
-    // { expiresIn: process.env.JWT_EXPIRES_IN }
+
     res.send({ token, user });
   } catch (error) {
     error.statusCode = 500;
@@ -71,13 +77,10 @@ const getUsers = async (req, res, next) => {
 
 const profile = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    if (req.userPayload.id === id) {
-      const { username, email } = await User.findById(id);
-      res.send({ username, email });
-    } else {
-      throw new Error(`You are not allowed to view this profile!`);
-    }
+    const { id } = req.userPayload;
+    const { username, email, password, userImg } = await User.findById(id);
+
+    res.send({ username, email, password, userImg });
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -87,51 +90,53 @@ const profile = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { username, email, password, userListItem, userFavouriteItem } =
-      req.body;
+    const { username, email, password, userListItem } = req.body;
+    let userId;
 
-    if (req.userPayload.id === id || req.userPayload.isAdmin) {
-      let { userList, userFavourite, userImg } = await User.findById(id);
-
-      if (userListItem) {
-        const exists = userList.some((item) => item._id === userListItem._id);
-        userList = exists
-          ? userList.filter((item) => item._id !== userListItem._id)
-          : [...userList, userListItem];
-      }
-
-      if (userFavouriteItem) {
-        const exists = userFavourite.some(
-          (item) => item._id === userFavouriteItem._id
-        );
-        userFavourite = exists
-          ? userFavourite.filter((item) => item._id !== userFavouriteItem._id)
-          : [...userFavourite, userFavouriteItem];
-      }
-
-      if (req.file) {
-        if (
-          req.file.mimetype === "image/jpeg" ||
-          req.file.mimetype === "image/png"
-        ) {
-          if (userImg) {
-            fs.unlinkSync(userImg);
-          }
-          userImg = req.file.path;
-        } else {
-          throw new Error(`You must add jpeg or png only!`);
-        }
-      }
-
-      const updatedUsers = await User.findByIdAndUpdate(
-        id,
-        { username, email, password, userList, userFavourite, userImg },
-        { new: true }
-      );
-      res.send(updatedUsers);
+    if (req.userPayload.isAdmin && id) {
+      userId = id;
+    } else if (req.userPayload.id) {
+      userId = req.userPayload.id;
     } else {
       throw new Error(`You are not allowed to update this profile!`);
     }
+    const user = await User.findById(userId);
+
+    if (userListItem) {
+      const exists = user.userList.some(
+        (item) => item._id === userListItem._id
+      );
+      user.userList = exists
+        ? user.userList.filter((item) => item._id !== userListItem._id)
+        : [...user.userList, userListItem];
+    }
+
+    if (req.files?.userImg) {
+      if (
+        req.files.userImg.mimetype === "image/jpeg" ||
+        req.files.userImg.mimetype === "image/png"
+      ) {
+        if (user.userImg) {
+          fs.unlinkSync(userImg);
+        }
+        user.userImg = req.files.userImg.path;
+      } else {
+        throw new Error(`You must add jpeg or png only!`);
+      }
+    }
+
+    const updatedUsers = await User.findByIdAndUpdate(
+      userId,
+      {
+        username,
+        email,
+        password,
+        userList: user.userList,
+        userImg: user.userImg,
+      },
+      { new: true }
+    );
+    res.send(updatedUsers);
   } catch (error) {
     error.statusCode = 403;
     next(error);

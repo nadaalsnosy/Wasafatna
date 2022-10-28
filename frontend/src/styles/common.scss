@@ -19,7 +19,13 @@
 .bg-light-yellow {
   background: #f9eecd !important;
 }
+// ...........................................................
 
+// border
+.border-green-5 {
+  border: 2px solid #abcbb2;
+  border-radius: 5px;
+}
 // ...........................................................
 
 // common things
@@ -51,6 +57,9 @@
 // ...........................................................
 
 //height
+.h-90 {
+  height: 90px !important;
+}
 .h-280 {
   height: 280px !important;
 }
@@ -62,7 +71,6 @@
 //tag
 img,
 video {
-  height: 100%;
   width: 100%;
   transition: 0.7s ease;
 }
@@ -133,6 +141,19 @@ a:hover img {
   height: fit-content !important;
 }
 // ...........................................................
+
+.inputValidation {
+  border-color: #dc3545;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url(../images//validation.svg);
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+.inputValidation:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.25rem rgb(220 53 69 / 25%);
+}
 
 @media (min-width: 992px) {
   .max-w-900 {

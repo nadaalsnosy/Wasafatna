@@ -18,7 +18,7 @@ const defaultRecipe = {
   instructions: "",
   genre: "",
 };
-const CreateRecipe = () => {
+const SaveRecipe = () => {
   const [mainImg, setMainImg] = useState();
   const [uploadedImgs, setUploadedImgs] = useState([]);
   const [uploadedVideos, setUploadedVideos] = useState([]);
@@ -26,23 +26,27 @@ const CreateRecipe = () => {
   const [validated, setValidated] = useState(false);
   // const [genre, setGenre] = useState("");
 
-  const { setRecipes, getRecipes, recipes } = useContext(RecipesContext);
+  const { setRecipes, getRecipes, recipes, recipe, setRecipe, getRecipe } =
+    useContext(RecipesContext);
   const { auth } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [recipe, setRecipe] = useState({});
-  const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe || recipe);
+  const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe);
+
+  // console.log(recipe);
+  useEffect(() => {
+    getRecipe(id);
+  }, [id]);
 
   useEffect(() => {
-    if (recipes?.length) {
-      setRecipe(recipes.find((item) => item._id === id));
+    if (recipe) {
+      setCurrentRecipe(recipe);
+      if (uploadedImgs.length === 0) {
+        setUploadedImgs(recipe.recipeImgs);
+      }
     }
-  }, [id, recipes]);
-
-  // useEffect(() => {
-  //   setCurrentRecipe(recipe || defaultRecipe);
-  // }, [recipe]);
+  }, [recipe]);
 
   const mainImgSelectHandeler = (e) => {
     const file = e.target.files[0];
@@ -123,8 +127,8 @@ const CreateRecipe = () => {
     event.preventDefault();
 
     if (!form.checkValidity() === false) {
-      console.log(currentRecipe);
-      addRecipe(currentRecipe);
+      // console.log(currentRecipe);
+      saveRecipe(currentRecipe);
     } else {
       setValidated(true);
     }
@@ -135,9 +139,13 @@ const CreateRecipe = () => {
     setCurrentRecipe((item) => ({ ...item, [name]: value }));
   };
 
-  const addRecipe = async (recipe) => {
+  const saveRecipe = async (newRecipe) => {
     const formData = new FormData();
+
     if (mainImg) formData.append("mainImg", mainImg.file);
+
+    console.log(uploadedImgs);
+    console.log(recipe.recipeImgs);
 
     if (uploadedImgs) {
       for (let i = 0; i < uploadedImgs.length; i++) {
@@ -151,10 +159,13 @@ const CreateRecipe = () => {
       }
     }
 
-    for (const key in recipe) {
-      if (Object.hasOwnProperty.call(recipe, key)) {
-        const element = recipe[key];
-        formData.append(key, element);
+    for (const key in newRecipe) {
+      if (Object.hasOwnProperty.call(newRecipe, key)) {
+        const element = newRecipe[key];
+
+        if (element !== recipe[key]) {
+          formData.append(key, element);
+        }
       }
     }
 
@@ -162,25 +173,49 @@ const CreateRecipe = () => {
       console.log(item);
     }
 
-    try {
-      const resFiles = await axios.post(
-        "/recipes/62fd90c4eb21e594a0f45bc9",
-        formData,
-        {
+    if (id) {
+      try {
+        const resFiles = await axios.patch(`/recipes/${id}`, formData, {
           headers: {
             "content-type": "multipart/form-data",
             Authorization: `${auth.token}`,
           },
-        }
-      );
-      console.log(resFiles);
-      setRecipes((recipes) => [...recipes, { ...recipe }]);
-      navigate("/myRecipes");
+        });
+        console.log(resFiles);
+        setRecipe(resFiles);
+        // setRecipes((recipes) => [...recipes, { ...recipe }]);
+        navigate(`/recipe/${recipe._id}`);
 
-      console.log(recipes);
-      // getRecipes();
-    } catch (error) {
-      console.log(error);
+        console.log(recipes);
+        // getRecipes();
+      } catch (error) {
+        console.log(error);
+      }
+
+      setRecipes((currentRecipes) => {
+        const recipeIndex = currentRecipes.findIndex(
+          (item) => item._id === recipe._id
+        );
+        currentRecipes.splice(recipeIndex, 1, recipe);
+        return [...currentRecipes];
+      });
+    } else {
+      try {
+        const resFiles = await axios.post("/recipes", formData, {
+          headers: {
+            "content-type": "multipart/form-data",
+            Authorization: `${auth.token}`,
+          },
+        });
+        console.log(resFiles);
+        setRecipes((recipes) => [...recipes, { ...recipe }]);
+        navigate(`/userRecipes${auth.user._id}`);
+
+        console.log(recipes);
+        // getRecipes();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -226,9 +261,18 @@ const CreateRecipe = () => {
                 {mainImg ? (
                   <img src={mainImg.imgPath} alt={`${mainImg.imgName}`} />
                 ) : (
-                  <p className="fs-7 inputPlaceholder">
-                    Choose The Recipe Main Image ...
-                  </p>
+                  <>
+                    {currentRecipe.recipeMainImg ? (
+                      <img
+                        src={`${process.env.REACT_APP_BASE_URL}${currentRecipe.recipeMainImg}`}
+                        alt={`${currentRecipe.recipeMainImg}`}
+                      />
+                    ) : (
+                      <p className="fs-7 inputPlaceholder">
+                        Choose The Recipe Main Image ...
+                      </p>
+                    )}
+                  </>
                 )}
               </div>
             </Form.Group>
@@ -274,11 +318,14 @@ const CreateRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
+
                 {uploadedImgs.length !== 0 ? (
                   uploadedImgs.map((uploadedImg, i) => (
                     <div
                       className="d-inline-block position-relative"
-                      key={uploadedImg.imgName}
+                      key={`${
+                        uploadedImg.imgPath ? uploadedImg.imgName : uploadedImg
+                      }`}
                     >
                       <span className="position-absolute deleteIcon">
                         <HighlightOffIcon
@@ -290,8 +337,16 @@ const CreateRecipe = () => {
                         />
                       </span>
                       <img
-                        src={uploadedImg.imgPath}
-                        alt={`${uploadedImg.imgName}`}
+                        src={`${
+                          uploadedImg.imgPath
+                            ? uploadedImg.imgPath
+                            : `${process.env.REACT_APP_BASE_URL}${uploadedImg}`
+                        }`}
+                        alt={`${
+                          uploadedImg.imgPath
+                            ? uploadedImg.imgName
+                            : uploadedImg
+                        }`}
                       />
                     </div>
                   ))
@@ -405,4 +460,4 @@ const CreateRecipe = () => {
   );
 };
 
-export default CreateRecipe;
+export default SaveRecipe;

@@ -14,11 +14,11 @@ const {
 //get
 recipeRouter.get("/", getAll);
 recipeRouter.get("/:id", getOne);
-recipeRouter.get("/user/:id", getUserRecipes);
+recipeRouter.get("/userRecipes/:id", getUserRecipes);
 
 //
 recipeRouter.post(
-  "/:id",
+  "/",
   upload.fields([
     {
       name: "mainImg",
@@ -36,12 +36,25 @@ recipeRouter.post(
   verifyToken,
   addNew
 );
+
 //update
 recipeRouter.patch(
   "/:id",
+  upload.fields([
+    {
+      name: "mainImg",
+      maxCount: 1,
+    },
+    {
+      name: "uploadedImgs",
+      maxCount: 30,
+    },
+    {
+      name: "uploadedVideos",
+      maxCount: 30,
+    },
+  ]),
   verifyToken,
-  upload.array("uploadedFiles", 30),
-  upload.single("mainImg"),
   updateOne
 );
 recipeRouter.delete("/:id", verifyToken, deleteOne);
