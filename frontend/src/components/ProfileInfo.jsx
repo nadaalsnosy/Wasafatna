@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 // import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 
-import { Modal } from "react-bootstrap";
-
 import {
   Table,
   TableBody,
@@ -15,24 +13,17 @@ import {
   Button,
 } from "@mui/material";
 import { Form } from "react-bootstrap";
+import ChangePassword from "./ChangePassword";
 
 const ProfileInfo = (props) => {
-  const {
-    user,
-    handleSubmit,
-    saveUser,
-    setValidated,
-    setMatchPassword,
-    setMatchEmail,
-    matchPassword,
-    matchEmail,
-    validated,
-    editCond,
-    setEditCond,
-  } = props;
+  const { user, saveUser, editCond, setEditCond } = props;
 
-  console.log(props);
+  const [validated, setValidated] = useState(false);
+  const [matchEmail, setMatchEmail] = useState(false);
+  const [matchPassword, setMatchPassword] = useState(false);
   // const { auth, setAuth } = useAuth();
+
+  const [currentUser, setCurrentUser] = useState(user);
 
   const fakePassword = "***************";
   const emailRGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
@@ -46,8 +37,6 @@ const ProfileInfo = (props) => {
     setFullscreen(breakpoint);
     setShow(true);
   }
-
-  const [currentUser, setCurrentUser] = useState(user);
 
   const handleChangeEditCond = () => {
     if (editCond) {
@@ -84,12 +73,25 @@ const ProfileInfo = (props) => {
     setCurrentUser((item) => ({ ...item, [name]: value }));
   };
 
+  const handleSubmit = (e) => {
+    const form = e.currentTarget;
+    e.preventDefault();
+
+    if (!form.checkValidity() === false) {
+      if (!matchEmail && !matchPassword) {
+        saveUser(currentUser);
+      }
+    } else {
+      setValidated(true);
+    }
+  };
+
   return (
     <div className="container me-xl-5 pe-xl-5 my-3">
       <Form
         noValidate
         validated={validated}
-        onSubmit={(e) => handleSubmit(e, currentUser)}
+        onSubmit={handleSubmit}
         className="container text-start mw-840"
       >
         <TableContainer component={Paper}>
@@ -246,47 +248,7 @@ const ProfileInfo = (props) => {
         )}
       </Form>
       <>
-        <Modal
-          // show={modalShow}
-          // onHide={() => setModalShow(false)}
-          show={show}
-          fullscreen={fullscreen}
-          onHide={() => setShow(false)}
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-        >
-          <Modal.Header closeButton>
-            <Modal.Title id="contained-modal-title-vcenter">
-              Modal heading
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Form>
-              <Form.Group
-                className="mb-3"
-                controlId="exampleForm.ControlInput1"
-              >
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="name@example.com"
-                  autoFocus
-                />
-              </Form.Group>
-              <Form.Group
-                className="mb-3"
-                controlId="exampleForm.ControlTextarea1"
-              >
-                <Form.Label>Example textarea</Form.Label>
-                <Form.Control as="textarea" rows={3} />
-              </Form.Group>
-            </Form>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button onClick={() => setShow(false)}>Close</Button>
-          </Modal.Footer>
-        </Modal>
+        <ChangePassword show={show} fullscreen={fullscreen} setShow={setShow} />
       </>
     </div>
   );

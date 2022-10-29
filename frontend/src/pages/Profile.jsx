@@ -15,9 +15,6 @@ const Profile = () => {
   const imgRef = useRef();
 
   const [editCond, setEditCond] = useState(false);
-  const [validated, setValidated] = useState(false);
-  const [matchEmail, setMatchEmail] = useState(false);
-  const [matchPassword, setMatchPassword] = useState(false);
 
   const [userImg, setUserImg] = useState();
 
@@ -40,21 +37,21 @@ const Profile = () => {
     setUserImg("");
   };
 
-  const handleSubmit = (event, submitedUser) => {
-    const form = event.currentTarget;
-    event.preventDefault();
-    console.log(event);
-    console.log(submitedUser);
+  // const handleSubmit = (event, submitedUser) => {
+  //   const form = event.currentTarget;
+  //   event.preventDefault();
+  //   console.log(event);
+  //   console.log(submitedUser);
 
-    if (!form.checkValidity() === false) {
-      if (!matchEmail && !matchPassword) {
-        console.log("go");
-        saveUser(submitedUser);
-      }
-    } else {
-      setValidated(true);
-    }
-  };
+  //   if (!form.checkValidity() === false) {
+  //     if (!matchEmail && !matchPassword) {
+  //       console.log("go");
+  //       saveUser(submitedUser);
+  //     }
+  //   } else {
+  //     setValidated(true);
+  //   }
+  // };
 
   const saveUser = async (updatedUser) => {
     const formData = new FormData();
@@ -107,7 +104,12 @@ const Profile = () => {
             My Profile
           </h1>
           <div className="d-md-flex flex-row-reverse my-5 gap-5 gap-xl-5 mx-xl-5">
-            <Form onSubmit={handleSubmit}>
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                saveUser();
+              }}
+            >
               <div>
                 <div
                   className={`position-relative fit-content m-auto my-3 mb-md-3 ps-xl-5 ${
@@ -160,18 +162,9 @@ const Profile = () => {
 
             <ProfileInfo
               user={user}
-              handleSubmit={handleSubmit}
               saveUser={saveUser}
-              setValidated={setValidated}
-              setMatchPassword={setMatchPassword}
-              setMatchEmail={setMatchEmail}
-              matchPassword={matchPassword}
-              matchEmail={matchEmail}
-              validated={validated}
               editCond={editCond}
               setEditCond={setEditCond}
-              // editCond={editCond}
-              // editCond={editCond}
             />
           </div>
         </div>
