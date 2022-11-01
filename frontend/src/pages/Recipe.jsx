@@ -66,7 +66,7 @@ const Recipe = () => {
             className="max-h-400 border-green-5"
             src={
               recipe?.recipeMainImg
-                ? `${process.env.REACT_APP_BASE_URL}${recipe?.recipeMainImg}`
+                ? `${process.env.REACT_APP_BASE_URL}${recipe?.recipeMainImg.imgPath}`
                 : recipeDefultImg
             }
             alt="Recipe MainImage"
@@ -97,12 +97,12 @@ const Recipe = () => {
           {recipe?.recipeImgs?.length ? (
             <>
               <div className="d-flex flex-wrap">
-                {recipe.recipeImgs.map((itemImg) => (
-                  <div className="col-12 col-md-6 p-2 h-280" key={itemImg}>
+                {recipe.recipeImgs.map((item) => (
+                  <div className="col-12 col-md-6 p-2 h-280" key={item.imgPath}>
                     <img
                       className="border-green-5 h-100"
-                      src={`${process.env.REACT_APP_BASE_URL}${itemImg}`}
-                      alt={itemImg.substring(14).replace(/[.]/g, "")}
+                      src={`${process.env.REACT_APP_BASE_URL}${item.imgPath}`}
+                      alt={item.imgName.substring(14).replace(/[.]/g, "")}
                     />
                   </div>
                 ))}
@@ -117,11 +117,14 @@ const Recipe = () => {
           {recipe?.recipeVideos?.length ? (
             <>
               <div className="d-flex flex-wrap">
-                {recipe.recipeVideos.map((itemVideo) => (
-                  <div className="col-12 col-md-6 p-2 h-280" key={itemVideo}>
+                {recipe.recipeVideos.map((item) => (
+                  <div
+                    className="col-12 col-md-6 p-2 h-280"
+                    key={item.videoPath}
+                  >
                     <video className="border-green-5 h-100" controls>
                       <source
-                        src={`${process.env.REACT_APP_BASE_URL}${itemVideo}`}
+                        src={`${process.env.REACT_APP_BASE_URL}${item.videoPath}`}
                         type="video/mp4"
                       />
                     </video>

@@ -8,6 +8,7 @@ const {
   profile,
   updateUser,
   deleteUser,
+  changePassword,
 } = require("./UserControllers");
 const upload = require("../Uploads");
 
@@ -26,12 +27,19 @@ userRouter.post("/signIn", login);
 //update
 userRouter.patch(
   "/",
+  upload.single("userImg"),
   verifyToken,
   validate,
   passwordHash,
-  upload.single("userImg"),
   updateUser
 );
 userRouter.delete("/:id", verifyToken, deleteUser);
+userRouter.post(
+  "/changePass",
+  // upload.any(),
+  verifyToken,
+  passwordHash,
+  changePassword
+);
 
 module.exports = userRouter;

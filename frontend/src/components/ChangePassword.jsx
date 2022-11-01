@@ -1,30 +1,41 @@
 import { useState } from "react";
+
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+
 const ChangePassword = (props) => {
   const { setShow, show, fullscreen } = props;
-  const [passwordData, setPasswordData] = useState({});
+  const { auth, setAuth } = useAuth();
+  const defultData = {
+    userPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  };
 
-  const [errorPassword, setErrorPassword] = useState(false);
+  const [passwordData, setPasswordData] = useState(defultData);
+  const [errorPassword, setErrorPassword] = useState("");
   const [matchPassword, setMatchPassword] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
 
   const passwordRGEX =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+  const errMsg = "please enter valid password!";
 
   const handleChangeValue = (e) => {
     const { name, value } = e.target;
 
     if (name === "userPassword") {
       if (value.length > 0) {
-        setErrorPassword(false);
+        setErrorPassword("");
       } else {
-        setErrorPassword(true);
+        setErrorPassword(errMsg);
       }
     }
 
-    if (name === "NewPassword") {
+    if (name === "newPassword") {
       if (passwordRGEX.test(value)) {
         setMatchPassword(false);
       } else {
@@ -33,7 +44,7 @@ const ChangePassword = (props) => {
     }
 
     if (name === "confirmNewPassword") {
-      if (value === passwordData.NewPassword) {
+      if (value === passwordData.newPassword) {
         setValidPassword(false);
       } else {
         setValidPassword(true);
@@ -42,17 +53,48 @@ const ChangePassword = (props) => {
 
     setPasswordData((item) => ({ ...item, [name]: value }));
   };
-  console.log(passwordData);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!passwordData.userPassword) setErrorPassword(true);
-    if (!passwordData.NewPassword) setMatchPassword(true);
+    if (!passwordData.userPassword) setErrorPassword(errMsg);
+    if (!passwordData.newPassword) setMatchPassword(true);
     if (!passwordData.confirmNewPassword) setValidPassword(true);
 
-    if (!validPassword && !matchPassword && !errorPassword) {
+    if (
+      !validPassword &&
+      !matchPassword &&
+      passwordData.userPassword !== "" &&
+      errorPassword !== "password is wrong!"
+    ) {
       console.log("pass");
+      changePass(passwordData);
+    }
+  };
+
+  const changePass = async (data) => {
+    try {
+      const res = await axios.post(
+        `/users/changePass/`,
+        { userPassword: data.userPassword, newPassword: data.newPassword },
+        {
+          headers: {
+            Authorization: `${auth.token}`,
+          },
+        }
+      );
+      console.log(res.data);
+      if (res.data === "The Password is Wrong") {
+        setErrorPassword("password is wrong!");
+      } else {
+        if (res.data.status !== 500) {
+          setAuth({ ...auth, user: res.data });
+          setPasswordData(defultData);
+          setShow(false);
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -88,7 +130,7 @@ const ChangePassword = (props) => {
                 onChange={handleChangeValue}
               />
               <p className={`errMsg ${errorPassword ? "shown" : "hidden"}`}>
-                please enter valid password!
+                {errorPassword}
               </p>
             </Form.Group>
 
@@ -98,12 +140,12 @@ const ChangePassword = (props) => {
                 className={`${matchPassword ? "inputValidation" : "passInput"}`}
                 type="password"
                 placeholder="Enter New Password"
-                name="NewPassword"
-                value={passwordData.NewPassword}
+                name="newPassword"
+                value={passwordData.newPassword}
                 onChange={handleChangeValue}
               />
               <p className={`errMsg ${matchPassword ? "shown" : "hidden"}`}>
-                please enter valid password!
+                {errMsg}
               </p>
             </Form.Group>
 
@@ -118,7 +160,7 @@ const ChangePassword = (props) => {
                 onChange={handleChangeValue}
               />
               <p className={`errMsg ${validPassword ? "shown" : "hidden"}`}>
-                please enter valid password!
+                {errMsg}
               </p>
             </Form.Group>
           </Modal.Body>

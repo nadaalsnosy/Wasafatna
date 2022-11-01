@@ -55,10 +55,14 @@ const RecipeCard = (props) => {
             height="194"
             image={
               item?.recipeMainImg
-                ? `${process.env.REACT_APP_BASE_URL}${item?.recipeMainImg}`
+                ? `${process.env.REACT_APP_BASE_URL}${item?.recipeMainImg.imgPath}`
                 : recipeDefultImg
             }
-            alt="Recipe Main Image"
+            alt={
+              item?.recipeMainImg
+                ? item.recipeMainImg.imgName
+                : "Recipe Main Image"
+            }
           />
           <CardContent>
             <h5>{item?.title}</h5>

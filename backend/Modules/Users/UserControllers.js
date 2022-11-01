@@ -9,16 +9,16 @@ const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
     const newUser = new User({ username, email, password });
-    if (req.file) {
-      if (
-        req.file.mimetype === "image/jpeg" ||
-        req.file.mimetype === "image/png"
-      ) {
-        newUser.userImg = req.file.path;
-      } else {
-        throw new Error(`You must add jpeg or png only!`);
-      }
-    }
+    // if (req.file) {
+    //   if (
+    //     req.file.mimetype === "image/jpeg" ||
+    //     req.file.mimetype === "image/png"
+    //   ) {
+    //     newUser.userImg = req.file.path;
+    //   } else {
+    //     throw new Error(`You must add jpeg or png only!`);
+    //   }
+    // }
 
     const { id: uID } = newUser;
     const token = await asynSign(
@@ -60,6 +60,30 @@ const login = async (req, res, next) => {
     next(error);
   }
 };
+const changePassword = async (req, res, next) => {
+  const { userPassword, newPassword } = req.body;
+  try {
+    const userId = req.userPayload.id;
+    const user = await User.findById(userId);
+
+    const { password } = user;
+    const result = await bcrypt.compare(userPassword, password);
+
+    if (result) {
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { password: newPassword },
+        { new: true }
+      );
+      res.send(updatedUser);
+    } else {
+      res.send("The Password is Wrong");
+    }
+  } catch (error) {
+    error.statusCode = 500;
+    next(error);
+  }
+};
 
 const getUsers = async (req, res, next) => {
   try {
@@ -78,9 +102,9 @@ const getUsers = async (req, res, next) => {
 const profile = async (req, res, next) => {
   try {
     const { id } = req.userPayload;
-    const { username, email, password, userImg } = await User.findById(id);
+    const { username, email, userImg } = await User.findById(id);
 
-    res.send({ username, email, password, userImg });
+    res.send({ username, email, userImg });
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -163,4 +187,12 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
-module.exports = { signUp, login, getUsers, profile, updateUser, deleteUser };
+module.exports = {
+  signUp,
+  login,
+  getUsers,
+  profile,
+  updateUser,
+  deleteUser,
+  changePassword,
+};

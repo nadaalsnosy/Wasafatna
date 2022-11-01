@@ -1,21 +1,23 @@
 import { useState, useRef } from "react";
+
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+
 import AnimatedPage from "../components/AnimatedPage";
 import ProfileInfo from "../components/ProfileInfo";
-import axios from "../api/axios";
 
 import userDefultImg from "../images/userIcon.png";
-import useAuth from "../hooks/useAuth";
+
 import { Form } from "react-bootstrap";
 import { Button } from "@mui/material";
-
 import EditIcon from "@mui/icons-material/Edit";
+
 const Profile = () => {
+  const imgRef = useRef();
   const { auth, setAuth } = useAuth();
   const user = auth?.user;
-  const imgRef = useRef();
 
   const [editCond, setEditCond] = useState(false);
-
   const [userImg, setUserImg] = useState();
 
   const userImgSelectHandeler = (e) => {
@@ -37,22 +39,6 @@ const Profile = () => {
     setUserImg("");
   };
 
-  // const handleSubmit = (event, submitedUser) => {
-  //   const form = event.currentTarget;
-  //   event.preventDefault();
-  //   console.log(event);
-  //   console.log(submitedUser);
-
-  //   if (!form.checkValidity() === false) {
-  //     if (!matchEmail && !matchPassword) {
-  //       console.log("go");
-  //       saveUser(submitedUser);
-  //     }
-  //   } else {
-  //     setValidated(true);
-  //   }
-  // };
-
   const saveUser = async (updatedUser) => {
     const formData = new FormData();
 
@@ -68,17 +54,11 @@ const Profile = () => {
       }
     }
 
-    for (let item of formData) {
-      console.log(item);
-    }
-
     const formDataLength = Array.from(formData.keys()).length;
     if (formDataLength !== 0) {
-      console.log("goo");
       try {
         const resFiles = await axios.patch(`/users/`, formData, {
           headers: {
-            "content-type": "multipart/form-data",
             Authorization: `${auth.token}`,
           },
         });
@@ -86,7 +66,6 @@ const Profile = () => {
         setAuth({ ...auth, user: resFiles.data });
         imgRef.current.value = "";
         setUserImg("");
-
         setEditCond(false);
       } catch (error) {
         console.log(error);

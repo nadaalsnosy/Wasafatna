@@ -75,39 +75,39 @@ const getUserRecipes = async (req, res, next) => {
 
 const addNew = async (req, res, next) => {
   try {
-    // const { id } = req.params;
+    const { title, rate, ingredients, instructions, createdAt, genre } =
+      req.body;
 
-    // if (req.userPayload.id === id) {
-    const {
-      title,
-      rate,
-      ingredients,
-      instructions,
-      createdAt,
-      recipeMainImg,
-      genre,
-    } = req.body;
-
-    let recipesImgs = [];
-    let recipesVideos = [];
+    let recipeMainImg;
+    let recipeImgs = [];
+    let recipeVideos = [];
 
     if (req.files) {
       const { mainImg, uploadedImgs, uploadedVideos } = req.files;
-      if (mainImg) recipeMainImg = mainImg[0].path;
+      if (mainImg)
+        recipeMainImg = {
+          imgPath: mainImg[0].path,
+          imgName: mainImg[0].filename,
+        };
       if (uploadedImgs)
-        uploadedImgs.forEach((item) => recipesImgs.push(item.path));
+        uploadedImgs.forEach((item) =>
+          recipeImgs.push({ imgPath: item.path, imgName: item.filename })
+        );
+
       if (uploadedVideos)
-        uploadedVideos.forEach((item) => recipesVideos.push(item.path));
+        uploadedVideos.forEach((item) =>
+          recipeVideos.push({ videoPath: item.path, videoName: item.filename })
+        );
     }
 
     const newRecipe = new Recipe({
       title,
       recipeMainImg,
       rate,
-      recipesImgs,
+      recipeImgs,
       ingredients,
       instructions,
-      recipesVideos,
+      recipeVideos,
       createdAt,
       genre,
       createdBy: req.userPayload.id,
@@ -115,9 +115,6 @@ const addNew = async (req, res, next) => {
 
     const createdRecipe = await newRecipe.save();
     res.send(createdRecipe);
-    // } else {
-    //   throw new Error(`You are not allowed to add Recipes Here`);
-    // }
   } catch (error) {
     error.statusCode = 500;
     next(error);
@@ -133,28 +130,31 @@ const updateOne = async (req, res, next) => {
       const { title, rate, ingredients, instructions, genre, deleteImgs } =
         req.body;
 
-      // if (req.files?.length) {
-      //   req.files.forEach((item) => {
-      //     if (item.mimetype === "video/mp4") {
-      //       recipe.recipesVideos.push(item.path);
-      //     } else {
-      //       recipe.recipesImgs.push(item.path);
-      //     }
-      //   });
-      // }
-
       if (req.files) {
         const { mainImg, uploadedImgs, uploadedVideos } = req.files;
         if (mainImg) {
-          if (recipe.recipeMainImg) {
-            fs.unlinkSync(recipe.recipeMainImg);
+          if (recipe.recipeMainImg.imgPath) {
+            fs.unlinkSync(recipe.recipeMainImg.imgPath);
           }
-          recipe.recipeMainImg = mainImg[0].path;
+          recipe.recipeMainImg = {
+            imgPath: mainImg[0].path,
+            imgName: mainImg[0].filename,
+          };
         }
         if (uploadedImgs)
-          uploadedImgs.forEach((item) => recipe.recipeImgs.push(item.path));
+          uploadedImgs.forEach((item) =>
+            recipe.recipeImgs.push({
+              imgPath: item.path,
+              imgName: item.filename,
+            })
+          );
         if (uploadedVideos)
-          uploadedVideos.forEach((item) => recipe.recipeVideos.push(item.path));
+          uploadedVideos.forEach((item) =>
+            recipe.recipeVideos.push({
+              videoPath: item.path,
+              videoName: item.filename,
+            })
+          );
       }
 
       if (deleteImgs) {
@@ -167,19 +167,6 @@ const updateOne = async (req, res, next) => {
           });
         });
       }
-      // if (req.file) {
-      //   if (
-      //     req.file.mimetype === "image/jpeg" ||
-      //     req.file.mimetype === "image/png"
-      //   ) {
-      //     if (recipe.mainImg) {
-      //       fs.unlinkSync(recipe.mainImg);
-      //     }
-      //     recipe.mainImg = req.file.path;
-      //   } else {
-      //     throw new Error(`You must add jpeg or png only!`);
-      //   }
-      // }
 
       const updatedRecipes = await Recipe.findByIdAndUpdate(
         id,

@@ -48,6 +48,7 @@ const RecipesModule = () => {
     try {
       const res = await axios.get(`/recipes/${id}`);
       setRecipe(res.data);
+      return res.data;
     } catch (error) {
       console.log(error);
     }
@@ -88,8 +89,8 @@ const RecipesModule = () => {
         <Route path="/profile" element={<Profile />} />
         <Route path="/favourite" element={<Favourite />} />
         <Route path="/userRecipes/:id" element={<UserRecipes />} />
-        <Route path="/saveRecipe" element={<saveRecipe />} />
-        <Route path="/editRecipe/:id" element={<saveRecipe />} />
+        <Route path="/saveRecipe" element={<SaveRecipe />} />
+        <Route path="/editRecipe/:id" element={<SaveRecipe />} />
 
         {/* </Route> */}
       </Routes>

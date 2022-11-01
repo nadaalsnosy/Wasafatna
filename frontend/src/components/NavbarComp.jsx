@@ -18,6 +18,8 @@ import { useEffect, useState } from "react";
 
 const NavbarComp = () => {
   const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
+
   // const [UserInfo, setUserInfo] = useState();
   // console.log(auth);
 
@@ -48,6 +50,7 @@ const NavbarComp = () => {
     try {
       localStorage.removeItem("user");
       setAuth("");
+      navigate("/");
     } catch (err) {
       console.log(err);
     }

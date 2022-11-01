@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
 
-// import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
-
 import {
   Table,
   TableBody,
@@ -13,6 +10,7 @@ import {
   Button,
 } from "@mui/material";
 import { Form } from "react-bootstrap";
+
 import ChangePassword from "./ChangePassword";
 
 const ProfileInfo = (props) => {
@@ -20,15 +18,11 @@ const ProfileInfo = (props) => {
 
   const [validated, setValidated] = useState(false);
   const [matchEmail, setMatchEmail] = useState(false);
-  const [matchPassword, setMatchPassword] = useState(false);
-  // const { auth, setAuth } = useAuth();
 
   const [currentUser, setCurrentUser] = useState(user);
 
   const fakePassword = "***************";
   const emailRGEX = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/;
-  const passwordRGEX =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
 
   const [fullscreen, setFullscreen] = useState(true);
   const [show, setShow] = useState(false);
@@ -63,13 +57,6 @@ const ProfileInfo = (props) => {
         setMatchEmail(true);
       }
     }
-    if (name === "password") {
-      if (passwordRGEX.test(value)) {
-        setMatchPassword(false);
-      } else {
-        setMatchPassword(true);
-      }
-    }
     setCurrentUser((item) => ({ ...item, [name]: value }));
   };
 
@@ -78,7 +65,7 @@ const ProfileInfo = (props) => {
     e.preventDefault();
 
     if (!form.checkValidity() === false) {
-      if (!matchEmail && !matchPassword) {
+      if (!matchEmail) {
         saveUser(currentUser);
       }
     } else {
@@ -189,33 +176,6 @@ const ProfileInfo = (props) => {
                       Change Password
                     </Button>
                   ) : (
-                    // <>
-                    //   <Form.Group
-                    //     className={``}
-                    //     controlId={`formGrid-user-password`}
-                    //   >
-                    //     <Form.Control
-                    //       // className="passInput fs-7"
-                    //       className={`passInput fs-7 ${
-                    //         matchPassword && `inputValidation`
-                    //       } `}
-                    //       name="password"
-                    //       type="password"
-                    //       placeholder={`Enter Password`}
-                    //       value={currentUser.password}
-                    //       onChange={handleChangeValue}
-                    //       required
-                    //       aria-describedby="userConfirmPassword"
-                    //     />
-                    //     <Form.Control.Feedback
-                    //       className={`${matchPassword && `d-block`}`}
-                    //       type="invalid"
-                    //     >
-                    //       Please provide all character types.
-                    //     </Form.Control.Feedback>
-                    //   </Form.Group>
-                    // </>
-
                     <p className={`text-capitalize mb-0`}>{fakePassword}</p>
                   )}
                 </TableCell>

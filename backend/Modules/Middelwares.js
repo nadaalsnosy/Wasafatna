@@ -10,6 +10,9 @@ const passwordHash = async (req, res, next) => {
   if (req.body.password) {
     req.body.password = await bcrypt.hash(req.body.password, saltRounds);
   }
+  if (req.body.newPassword) {
+    req.body.newPassword = await bcrypt.hash(req.body.newPassword, saltRounds);
+  }
   next();
 };
 
@@ -51,8 +54,6 @@ const validate = (req, res, next) => {
         )
         .empty(""),
       userListItem: Joi.string(),
-      userFavouriteItem: Joi.string(),
-
     });
 
     Joi.attempt(req.body, schema);

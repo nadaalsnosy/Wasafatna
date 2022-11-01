@@ -33,7 +33,6 @@ app.use(function (req, res, next) {
 app.use("/users", userRouter);
 app.use("/recipes", recipeRouter);
 app.use("/uploads", express.static("uploads"));
-app.use("/images", express.static("images"));
 
 mongoose.connect(process.env.DB, (err) => {
   if (err) process.exit(1);

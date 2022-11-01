@@ -1,49 +1,60 @@
 import { useState, useContext, useEffect } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { Form } from "react-bootstrap";
 import { MenuItem, FormControl, Select, Button } from "@mui/material";
 import BackupIcon from "@mui/icons-material/Backup";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
+import AnimatedPage from "../components/AnimatedPage";
 import { RecipesContext } from "../context/RecipesModule";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
-
-import AnimatedPage from "../components/AnimatedPage";
 
 const defaultRecipe = {
   title: "",
   ingredients: "",
   instructions: "",
-  genre: "",
+  genre: "others",
 };
 const SaveRecipe = () => {
   const [mainImg, setMainImg] = useState();
   const [uploadedImgs, setUploadedImgs] = useState([]);
   const [uploadedVideos, setUploadedVideos] = useState([]);
 
-  const [validated, setValidated] = useState(false);
-  // const [genre, setGenre] = useState("");
+  console.log(mainImg);
 
-  const { setRecipes, getRecipes, recipes, recipe, setRecipe, getRecipe } =
-    useContext(RecipesContext);
+  const [validated, setValidated] = useState(false);
+
   const { auth } = useAuth();
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe);
+  const { setRecipes, setRecipe, recipe, getRecipe } =
+    useContext(RecipesContext);
 
-  // console.log(recipe);
+  const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe);
+  console.log(currentRecipe);
+
   useEffect(() => {
     getRecipe(id);
   }, [id]);
 
   useEffect(() => {
-    if (recipe) {
-      setCurrentRecipe(recipe);
-      if (uploadedImgs.length === 0) {
-        setUploadedImgs(recipe.recipeImgs);
+    if (!id) {
+      setCurrentRecipe(defaultRecipe);
+    } else {
+      if (recipe) {
+        setCurrentRecipe(recipe);
+        if (!mainImg) {
+          setMainImg(recipe.recipeMainImg);
+        }
+        if (uploadedImgs?.length === 0) {
+          setUploadedImgs(recipe.recipeImgs);
+        }
+        if (uploadedVideos?.length === 0) {
+          setUploadedVideos(recipe.recipeVideos);
+        }
       }
     }
   }, [recipe]);
@@ -78,7 +89,7 @@ const SaveRecipe = () => {
         });
       }
     });
-    if (uploadedImgs.length === 0) {
+    if (uploadedImgs?.length === 0) {
       setUploadedImgs(imagesArr);
     } else {
       setUploadedImgs([...uploadedImgs, ...imagesArr]);
@@ -101,18 +112,32 @@ const SaveRecipe = () => {
         });
       }
     });
-    if (uploadedVideos.length === 0) {
+    if (uploadedVideos?.length === 0) {
       setUploadedVideos(videosArr);
     } else {
       setUploadedVideos([...uploadedVideos, ...videosArr]);
     }
   };
 
+  const resetRecipe = () => {
+    setCurrentRecipe(defaultRecipe);
+    if (id) {
+      navigate(`/recipe/${id}`);
+    } else {
+      navigate(`/userRecipes/${auth.user._id}`);
+    }
+  };
+  console.log(uploadedImgs);
+
   const deleteImageHandler = (imgName) => {
-    const newImages = uploadedImgs.filter((item) => {
-      return item.imgName !== imgName;
-    });
-    setUploadedImgs(newImages);
+    // const newImages = uploadedImgs.filter((item) => {
+    //   if (item.imgName) {
+    //     return item.imgName !== imgName;
+    //   } else {
+    //     return item !== item;
+    //   }
+    // });
+    // setUploadedImgs(newImages);
   };
 
   const deleteVideoHandler = (videoName) => {
@@ -127,8 +152,8 @@ const SaveRecipe = () => {
     event.preventDefault();
 
     if (!form.checkValidity() === false) {
-      // console.log(currentRecipe);
       saveRecipe(currentRecipe);
+      console.log(currentRecipe);
     } else {
       setValidated(true);
     }
@@ -144,17 +169,14 @@ const SaveRecipe = () => {
 
     if (mainImg) formData.append("mainImg", mainImg.file);
 
-    console.log(uploadedImgs);
-    console.log(recipe.recipeImgs);
-
     if (uploadedImgs) {
-      for (let i = 0; i < uploadedImgs.length; i++) {
+      for (let i = 0; i < uploadedImgs?.length; i++) {
         formData.append("uploadedImgs", uploadedImgs[i].file);
       }
     }
 
     if (uploadedVideos) {
-      for (let i = 0; i < uploadedVideos.length; i++) {
+      for (let i = 0; i < uploadedVideos?.length; i++) {
         formData.append("uploadedVideos", uploadedVideos[i].file);
       }
     }
@@ -162,8 +184,11 @@ const SaveRecipe = () => {
     for (const key in newRecipe) {
       if (Object.hasOwnProperty.call(newRecipe, key)) {
         const element = newRecipe[key];
-
-        if (element !== recipe[key]) {
+        if (id) {
+          if (element !== recipe[key]) {
+            formData.append(key, element);
+          }
+        } else {
           formData.append(key, element);
         }
       }
@@ -174,45 +199,39 @@ const SaveRecipe = () => {
     }
 
     if (id) {
-      try {
-        const resFiles = await axios.patch(`/recipes/${id}`, formData, {
-          headers: {
-            "content-type": "multipart/form-data",
-            Authorization: `${auth.token}`,
-          },
-        });
-        console.log(resFiles);
-        setRecipe(resFiles);
-        // setRecipes((recipes) => [...recipes, { ...recipe }]);
-        navigate(`/recipe/${recipe._id}`);
-
-        console.log(recipes);
-        // getRecipes();
-      } catch (error) {
-        console.log(error);
-      }
-
-      setRecipes((currentRecipes) => {
-        const recipeIndex = currentRecipes.findIndex(
-          (item) => item._id === recipe._id
-        );
-        currentRecipes.splice(recipeIndex, 1, recipe);
-        return [...currentRecipes];
-      });
+      console.log(newRecipe);
+      // try {
+      //   const resFiles = await axios.patch(`/recipes/${id}`, formData, {
+      //     headers: {
+      //       // "content-type": "multipart/form-data",
+      //       Authorization: `${auth.token}`,
+      //     },
+      //   });
+      //   console.log(resFiles);
+      //   setRecipe(resFiles);
+      //   setRecipes((currentRecipes) => {
+      //     const recipeIndex = currentRecipes.findIndex(
+      //       (item) => item._id === recipe._id
+      //     );
+      //     currentRecipes.splice(recipeIndex, 1, recipe);
+      //     return [...currentRecipes];
+      //   });
+      //   navigate(`/recipe/${recipe._id}`);
+      // } catch (error) {
+      //   console.log(error);
+      // }
     } else {
       try {
         const resFiles = await axios.post("/recipes", formData, {
           headers: {
-            "content-type": "multipart/form-data",
+            // "content-type": "multipart/form-data",
             Authorization: `${auth.token}`,
           },
         });
         console.log(resFiles);
+        setCurrentRecipe(defaultRecipe);
         setRecipes((recipes) => [...recipes, { ...recipe }]);
-        navigate(`/userRecipes${auth.user._id}`);
-
-        console.log(recipes);
-        // getRecipes();
+        navigate(`/userRecipes/${auth.user._id}`);
       } catch (error) {
         console.log(error);
       }
@@ -224,7 +243,7 @@ const SaveRecipe = () => {
       <AnimatedPage>
         <div className="container">
           <h1 className="fs-45 text-start my-5 mx-2 text-success">
-            New Recipe
+            {id ? "Edit Recipe" : "New Recipe"}
           </h1>
           <Form
             noValidate
@@ -246,7 +265,7 @@ const SaveRecipe = () => {
             </Form.Group>
 
             <Form.Group className={`mb-5`} controlId="formMainImgFile">
-              <p className="form-label">Main Recipe Image</p>
+              <p className="form-label">Recipe Main Image</p>
               <Form.Control
                 className="d-none"
                 type="file"
@@ -258,21 +277,23 @@ const SaveRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
-                {mainImg ? (
-                  <img src={mainImg.imgPath} alt={`${mainImg.imgName}`} />
+                {mainImg?.imgPath ? (
+                  <img
+                    src={`${
+                      mainImg.file
+                        ? mainImg.imgPath
+                        : `${process.env.REACT_APP_BASE_URL}${currentRecipe.recipeMainImg.imgPath}`
+                    }`}
+                    alt={`${
+                      mainImg.file
+                        ? mainImg.imgName
+                        : currentRecipe.recipeMainImg.imgName
+                    }`}
+                  />
                 ) : (
-                  <>
-                    {currentRecipe.recipeMainImg ? (
-                      <img
-                        src={`${process.env.REACT_APP_BASE_URL}${currentRecipe.recipeMainImg}`}
-                        alt={`${currentRecipe.recipeMainImg}`}
-                      />
-                    ) : (
-                      <p className="fs-7 inputPlaceholder">
-                        Choose The Recipe Main Image ...
-                      </p>
-                    )}
-                  </>
+                  <p className="fs-7 inputPlaceholder">
+                    Choose The Recipe Main Image ...
+                  </p>
                 )}
               </div>
             </Form.Group>
@@ -319,8 +340,8 @@ const SaveRecipe = () => {
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
 
-                {uploadedImgs.length !== 0 ? (
-                  uploadedImgs.map((uploadedImg, i) => (
+                {uploadedImgs?.length !== 0 ? (
+                  uploadedImgs?.map((uploadedImg, i) => (
                     <div
                       className="d-inline-block position-relative"
                       key={`${
@@ -329,7 +350,7 @@ const SaveRecipe = () => {
                     >
                       <span className="position-absolute deleteIcon">
                         <HighlightOffIcon
-                          onClick={() =>
+                          onClick={(e) =>
                             deleteImageHandler(uploadedImg.imgName)
                           }
                           color="error"
@@ -338,14 +359,14 @@ const SaveRecipe = () => {
                       </span>
                       <img
                         src={`${
-                          uploadedImg.imgPath
+                          uploadedImg.file
                             ? uploadedImg.imgPath
-                            : `${process.env.REACT_APP_BASE_URL}${uploadedImg}`
+                            : `${process.env.REACT_APP_BASE_URL}${uploadedImg.imgPath}`
                         }`}
                         alt={`${
-                          uploadedImg.imgPath
+                          uploadedImg.file
                             ? uploadedImg.imgName
-                            : uploadedImg
+                            : uploadedImg.imgName
                         }`}
                       />
                     </div>
@@ -365,11 +386,6 @@ const SaveRecipe = () => {
                 type="file"
                 name="recipesVideos"
                 onChange={videosSelectHandeler}
-                // value={currentRecipe.recipesVideos}
-                // onChange={(e) => {
-                //   videosSelectHandeler(e);
-                //   handleChangeValue(e);
-                // }}
                 multiple
                 accept="video/*"
               />
@@ -378,8 +394,9 @@ const SaveRecipe = () => {
                 <Form.Label className="uploadIconLable">
                   <BackupIcon className="uploadIcon" />
                 </Form.Label>
-                {uploadedVideos.length !== 0 ? (
-                  uploadedVideos.map((uploadedVideo) => (
+
+                {uploadedVideos?.length !== 0 ? (
+                  uploadedVideos?.map((uploadedVideo) => (
                     <div
                       className="d-inline-block position-relative"
                       key={uploadedVideo.videoName}
@@ -395,7 +412,11 @@ const SaveRecipe = () => {
                       </span>
                       <video controls key={uploadedVideo.videoName}>
                         <source
-                          src={uploadedVideo.videoPath}
+                          src={`${
+                            uploadedVideo.file
+                              ? uploadedVideo.videoPath
+                              : `${process.env.REACT_APP_BASE_URL}${uploadedVideo.videoPath}`
+                          }`}
                           type="video/mp4"
                         />
                       </video>
@@ -415,7 +436,6 @@ const SaveRecipe = () => {
                 <Select
                   className="w-100"
                   name="genre"
-                  // value={defaultRecipe.genre}
                   value={currentRecipe.genre}
                   onChange={handleChangeValue}
                   displayEmpty
@@ -433,25 +453,12 @@ const SaveRecipe = () => {
             </Form.Group>
 
             <div className="my-3 d-flex gap-2 justify-content-end">
-              <Button
-                // className="d-block ms-auto my-3 "
-                variant="contained"
-                color="success"
-                type="submit"
-                // onClick={handleChangeEditCond}
-              >
+              <Button variant="contained" color="success" type="submit">
                 Save
               </Button>
-              <Link to={"/"}>
-                <Button
-                  // className="d-block ms-auto my-3 "
-                  variant="contained"
-                  color="error"
-                  // onClick={handleChangeEditCond}
-                >
-                  Cancle
-                </Button>
-              </Link>
+              <Button variant="contained" color="error" onClick={resetRecipe}>
+                Cancle
+              </Button>
             </div>
           </Form>
         </div>

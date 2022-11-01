@@ -8,7 +8,7 @@ const RecipeSchema = new Schema({
     required: true,
   },
   recipeMainImg: {
-    type: String,
+    type: Object,
   },
   rate: {
     type: Number,

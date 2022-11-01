@@ -15,7 +15,7 @@ const passwordREGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/;
 const SignUp = () => {
   // const errRef = useRef();
   const navigate = useNavigate();
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
 
   console.log(auth);
 
@@ -80,8 +80,17 @@ const SignUp = () => {
         }
       );
       console.log(res);
-
-      navigate("/signIn");
+      if (res?.data?.status === 500) {
+        setErrMsg(res.data.message);
+      } else {
+        const token = res?.data?.token;
+        const user = res?.data?.user;
+        if (res.data) {
+          setAuth({ token, user });
+          localStorage.setItem("user", JSON.stringify(res.data));
+        }
+        navigate("/");
+      }
     } catch (err) {
       if (!err?.response) {
         console.log("No Server Response");
