@@ -18,23 +18,22 @@ const defaultRecipe = {
   genre: "others",
 };
 const SaveRecipe = () => {
+  const { auth } = useAuth();
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [mainImg, setMainImg] = useState();
   const [uploadedImgs, setUploadedImgs] = useState([]);
   const [uploadedVideos, setUploadedVideos] = useState([]);
 
-  console.log(mainImg);
-
+  const [deleteImgs, setDeleteImgs] = useState([]);
+  const [deleteVideos, setDeleteVideos] = useState([]);
   const [validated, setValidated] = useState(false);
-
-  const { auth } = useAuth();
-  const { id } = useParams();
-  const navigate = useNavigate();
 
   const { setRecipes, setRecipe, recipe, getRecipe } =
     useContext(RecipesContext);
 
   const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe);
-  console.log(currentRecipe);
 
   useEffect(() => {
     getRecipe(id);
@@ -127,22 +126,23 @@ const SaveRecipe = () => {
       navigate(`/userRecipes/${auth.user._id}`);
     }
   };
-  console.log(uploadedImgs);
 
-  const deleteImageHandler = (imgName) => {
-    // const newImages = uploadedImgs.filter((item) => {
-    //   if (item.imgName) {
-    //     return item.imgName !== imgName;
-    //   } else {
-    //     return item !== item;
-    //   }
-    // });
-    // setUploadedImgs(newImages);
+  const deleteImageHandler = (delFile) => {
+    if (!delFile.file) {
+      setDeleteImgs([...deleteImgs, delFile.imgName]);
+    }
+    const newImages = uploadedImgs.filter((item) => {
+      return item.imgName !== delFile.imgName;
+    });
+    setUploadedImgs(newImages);
   };
 
-  const deleteVideoHandler = (videoName) => {
+  const deleteVideoHandler = (delFile) => {
+    if (!delFile.file) {
+      setDeleteVideos([...deleteVideos, delFile.videoName]);
+    }
     const newVideos = uploadedVideos.filter((item) => {
-      return item.videoName !== videoName;
+      return item.videoName !== delFile.videoName;
     });
     setUploadedVideos(newVideos);
   };
@@ -153,7 +153,6 @@ const SaveRecipe = () => {
 
     if (!form.checkValidity() === false) {
       saveRecipe(currentRecipe);
-      console.log(currentRecipe);
     } else {
       setValidated(true);
     }
@@ -175,9 +174,21 @@ const SaveRecipe = () => {
       }
     }
 
+    if (deleteImgs) {
+      for (let i = 0; i < deleteImgs?.length; i++) {
+        formData.append("deleteImgs", deleteImgs[i]);
+      }
+    }
+
     if (uploadedVideos) {
       for (let i = 0; i < uploadedVideos?.length; i++) {
         formData.append("uploadedVideos", uploadedVideos[i].file);
+      }
+    }
+
+    if (deleteVideos) {
+      for (let i = 0; i < deleteVideos?.length; i++) {
+        formData.append("deleteVideos", deleteVideos[i]);
       }
     }
 
@@ -194,44 +205,36 @@ const SaveRecipe = () => {
       }
     }
 
-    for (let item of formData) {
-      console.log(item);
-    }
-
     if (id) {
-      console.log(newRecipe);
-      // try {
-      //   const resFiles = await axios.patch(`/recipes/${id}`, formData, {
-      //     headers: {
-      //       // "content-type": "multipart/form-data",
-      //       Authorization: `${auth.token}`,
-      //     },
-      //   });
-      //   console.log(resFiles);
-      //   setRecipe(resFiles);
-      //   setRecipes((currentRecipes) => {
-      //     const recipeIndex = currentRecipes.findIndex(
-      //       (item) => item._id === recipe._id
-      //     );
-      //     currentRecipes.splice(recipeIndex, 1, recipe);
-      //     return [...currentRecipes];
-      //   });
-      //   navigate(`/recipe/${recipe._id}`);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-    } else {
       try {
-        const resFiles = await axios.post("/recipes", formData, {
+        const resFiles = await axios.patch(`/recipes/${id}`, formData, {
           headers: {
-            // "content-type": "multipart/form-data",
             Authorization: `${auth.token}`,
           },
         });
         console.log(resFiles);
-        setCurrentRecipe(defaultRecipe);
+        setRecipe(resFiles);
+        setRecipes((currentRecipes) => {
+          const recipeIndex = currentRecipes.findIndex(
+            (item) => item._id === recipe._id
+          );
+          currentRecipes.splice(recipeIndex, 1, recipe);
+          return [...currentRecipes];
+        });
+        resetRecipe();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const resFiles = await axios.post("/recipes", formData, {
+          headers: {
+            Authorization: `${auth.token}`,
+          },
+        });
+        console.log(resFiles);
         setRecipes((recipes) => [...recipes, { ...recipe }]);
-        navigate(`/userRecipes/${auth.user._id}`);
+        resetRecipe();
       } catch (error) {
         console.log(error);
       }
@@ -350,9 +353,7 @@ const SaveRecipe = () => {
                     >
                       <span className="position-absolute deleteIcon">
                         <HighlightOffIcon
-                          onClick={(e) =>
-                            deleteImageHandler(uploadedImg.imgName)
-                          }
+                          onClick={(e) => deleteImageHandler(uploadedImg)}
                           color="error"
                           className="bg-light-yellow rounded-circle"
                         />
@@ -403,9 +404,7 @@ const SaveRecipe = () => {
                     >
                       <span className="position-absolute deleteIcon">
                         <HighlightOffIcon
-                          onClick={() =>
-                            deleteVideoHandler(uploadedVideo.videoName)
-                          }
+                          onClick={() => deleteVideoHandler(uploadedVideo)}
                           color="error"
                           className="bg-light-yellow rounded-circle"
                         />

@@ -1,12 +1,10 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import dateFormat from "dateformat";
 
 import { Button, CardHeader, Avatar } from "@mui/material";
 
-import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
-
 import AnimatedPage from "../components/AnimatedPage";
 import { RecipesContext } from "../context/RecipesModule";
 
@@ -15,12 +13,8 @@ import userDefultImg from "../images/userIcon.png";
 
 const Recipe = () => {
   const { auth } = useAuth();
-
   const { id } = useParams();
   const { recipe, getRecipe } = useContext(RecipesContext);
-  console.log(recipe?.recipeImgs?.length);
-
-  console.log(recipe);
 
   useEffect(() => {
     getRecipe(id);
@@ -136,16 +130,17 @@ const Recipe = () => {
             <p className="text-start">No Videos have been added</p>
           )}
           {auth?.user?._id === recipe?.createdBy?._id && (
-            <Link to={`/editRecipe/${recipe?._id}`}>
-              <Button
-                className="d-block ms-auto me-3 my-3 "
-                variant="contained"
-                color="success"
-                // onClick={handleChangeEditCond}
-              >
-                Edit
-              </Button>
-            </Link>
+            <div className="my-3 d-flex gap-2 justify-content-end">
+              <Link to={`/editRecipe/${recipe?._id}`}>
+                <Button
+                  className="ms-auto me-3 my-3 "
+                  variant="contained"
+                  color="success"
+                >
+                  Edit
+                </Button>
+              </Link>
+            </div>
           )}
         </div>
       </AnimatedPage>

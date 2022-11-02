@@ -127,8 +127,15 @@ const updateOne = async (req, res, next) => {
     const recipe = await Recipe.findById(id);
 
     if (req.userPayload.id === recipe.createdBy.toString()) {
-      const { title, rate, ingredients, instructions, genre, deleteImgs } =
-        req.body;
+      const {
+        title,
+        rate,
+        ingredients,
+        instructions,
+        genre,
+        deleteImgs,
+        deleteVideos,
+      } = req.body;
 
       if (req.files) {
         const { mainImg, uploadedImgs, uploadedVideos } = req.files;
@@ -158,14 +165,42 @@ const updateOne = async (req, res, next) => {
       }
 
       if (deleteImgs) {
-        deleteImgs.forEach((imgPath) => {
+        if (typeof(deleteImgs) === "object") {
+          deleteImgs.forEach((imgName) => {
+            recipe.recipeImgs.forEach((item, index) => {
+              if (item.imgName === imgName) {
+                fs.unlinkSync(item.imgPath);
+                recipe.recipeImgs.splice(index, 1);
+              }
+            });
+          });
+        } else {
           recipe.recipeImgs.forEach((item, index) => {
-            if (item === imgPath) {
-              fs.unlinkSync(item);
+            if (item.imgName === deleteImgs) {
+              fs.unlinkSync(item.imgPath);
               recipe.recipeImgs.splice(index, 1);
             }
           });
-        });
+        }
+      }
+      if (deleteVideos) {
+        if (typeof(deleteVideos) === "object") {
+          deleteVideos.forEach((videoName) => {
+            recipe.recipeVideos.forEach((item, index) => {
+              if (item.videoName === videoName) {
+                fs.unlinkSync(item.videoPath);
+                recipe.recipeVideos.splice(index, 1);
+              }
+            });
+          });
+        } else {
+          recipe.recipeVideos.forEach((item, index) => {
+            if (item.videoName === deleteVideos) {
+              fs.unlinkSync(item.videoPath);
+              recipe.recipeVideos.splice(index, 1);
+            }
+          });
+        }
       }
 
       const updatedRecipes = await Recipe.findByIdAndUpdate(
