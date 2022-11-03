@@ -10,7 +10,7 @@ import { RecipesContext } from "../context/RecipesModule";
 
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, createSearchParams } from "react-router-dom";
 
 const Home = () => {
   const { recipes, setRecipes, getRecipes, recipesPageCounter } =
@@ -18,22 +18,44 @@ const Home = () => {
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  let pageNum = location.search.split("?page=")[1];
+  const query = new URLSearchParams(location.search);
+  // let pageNum = location.search.split("?page=")[1];
+  // let pageNum = query.get("page");
+  let page = query.get("page");
+  let genre = query.get("genre");
 
-  const [page, setPage] = useState(pageNum);
+  // console.log(pageNum);
+
+  // console.log(query.get("genre"));
+
+  console.log(recipes);
+
+  // const [page, setPage] = useState(pageNum);
 
   useEffect(() => {
-    getRecipes(page);
-  }, [page]);
+    getRecipes(page, genre);
+  }, [page, genre]);
 
   const pageChanges = (e, p) => {
-    navigate(`?page=${p}`);
-    setPage(p);
+    // navigate(`?page=${p}`);
+
+    query.set("page", p);
+    if (genre) query.set("genre", genre);
+
+    navigate(`/?${query.toString()}`);
+    console.log(query.toString());
+    // const params = { page: p };
+    // if ("genre") params.genre = "others";
+    // navigate({
+    //   pathname: "/",
+    //   search: `?${createSearchParams(params)}`,
+    // });
+    // setPage(p);
   };
 
   useEffect(() => {
-    getRecipes(pageNum);
-    setPage(location.search.split("?page=")[1]);
+    getRecipes(page, genre);
+    // setPage(location.search.split("?page=")[1]);
   }, []);
 
   return (
@@ -53,7 +75,7 @@ const Home = () => {
             count={recipesPageCounter}
             color="success"
             onChange={pageChanges}
-            page={+pageNum || 1}
+            page={+page || 1}
           />
         </Stack>
       </AnimatedPage>

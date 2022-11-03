@@ -29,7 +29,10 @@ const Recipe = () => {
               Home
             </Link>{" "}
             /{" "}
-            <Link className="text-placeholder text-capitalize" to={"/"}>
+            <Link
+              className="text-placeholder text-capitalize"
+              to={`/?genre=${recipe?.genre}`}
+            >
               {recipe?.genre}
             </Link>
           </p>

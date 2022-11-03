@@ -20,10 +20,11 @@ const UserRecipes = () => {
   const { id } = useParams();
   const { auth } = useAuth();
 
-  let pageNum = location.search.split("?page=")[1];
-  const [page, setPage] = useState(pageNum);
+  // let pageNum = location.search.split("?page=")[1];
+  // const [page, setPage] = useState(pageNum);
+  const query = new URLSearchParams(location.search);
+  let page = query.get("page");
   const [recipesPageCounter, setRecipesPageCounter] = useState();
-
 
   const getRecipes = async (page, limit, order, sort) => {
     try {
@@ -44,13 +45,16 @@ const UserRecipes = () => {
   }, [page]);
 
   const pageChanges = (e, p) => {
-    navigate(`?page=${p}`);
-    setPage(p);
+    // navigate(`?page=${p}`);
+    // setPage(p);
+
+    query.set("page", p);
+    navigate(`/userRecipes/${id}/?${query.toString()}`);
   };
 
   useEffect(() => {
-    getRecipes(pageNum);
-    setPage(location.search.split("?page=")[1]);
+    getRecipes(page);
+    // setPage(location.search.split("?page=")[1]);
   }, []);
 
   return (
@@ -83,7 +87,7 @@ const UserRecipes = () => {
               count={recipesPageCounter}
               color="success"
               onChange={pageChanges}
-              page={+pageNum || 1}
+              page={+page || 1}
             />
           </Stack>
         </div>
