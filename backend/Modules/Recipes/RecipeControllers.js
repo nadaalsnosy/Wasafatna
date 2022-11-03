@@ -14,32 +14,33 @@ const getAll = async (req, res, next) => {
 
     let sortBy = {};
     sortBy[sort] = order;
+    sortBy["title"] = 1;
 
-    if (genre) {
-      const recipes = await Recipe.find({
-        $and: [{ title: { $regex: search } }, { genre: genre }],
-      })
-        .limit(limit)
-        .skip(page * limit)
-        .sort(sortBy)
-        .populate({
-          path: "createdBy",
-          select: ["username", "userImg"],
-        });
-      res.send(recipes);
+    const filterRecipes = [{ title: { $regex: search } }];
+    if (genre) filterRecipes.push({ genre: genre });
+
+    const recipesLength = (
+      await Recipe.find({ $and: filterRecipes }).sort(sortBy)
+    ).length;
+
+    let recipesPageCounter;
+
+    if (recipesLength % limit === 0) {
+      recipesPageCounter = recipesLength / limit;
     } else {
-      const recipes = await Recipe.find({
-        title: { $regex: search },
-      })
-        .limit(limit)
-        .skip(page * limit)
-        .sort(sortBy)
-        .populate({
-          path: "createdBy",
-          select: ["username", "userImg"],
-        });
-      res.send(recipes);
+      const rest = recipesLength % limit;
+      recipesPageCounter = (recipesLength - rest + limit) / limit;
     }
+
+    const recipes = await Recipe.find({ $and: filterRecipes })
+      .limit(limit)
+      .skip(page * limit)
+      .sort(sortBy)
+      .populate({
+        path: "createdBy",
+        select: ["username", "userImg"],
+      });
+    res.send({ recipes, recipesPageCounter });
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -56,6 +57,18 @@ const getUserRecipes = async (req, res, next) => {
 
     let sortBy = {};
     sortBy[sort] = order;
+    sortBy["title"] = 1;
+
+    const recipesLength = (await Recipe.find({ createdBy: id })).length;
+
+    let recipesPageCounter;
+
+    if (recipesLength % limit === 0) {
+      recipesPageCounter = recipesLength / limit;
+    } else {
+      const rest = recipesLength % limit;
+      recipesPageCounter = (recipesLength - rest + limit) / limit;
+    }
 
     const userRecipes = await Recipe.find({ createdBy: id })
       .limit(limit)
@@ -66,7 +79,7 @@ const getUserRecipes = async (req, res, next) => {
         select: ["username", "userImg"],
       });
 
-    res.send(userRecipes);
+    res.send({ userRecipes, recipesPageCounter });
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -165,7 +178,7 @@ const updateOne = async (req, res, next) => {
       }
 
       if (deleteImgs) {
-        if (typeof(deleteImgs) === "object") {
+        if (typeof deleteImgs === "object") {
           deleteImgs.forEach((imgName) => {
             recipe.recipeImgs.forEach((item, index) => {
               if (item.imgName === imgName) {
@@ -184,7 +197,7 @@ const updateOne = async (req, res, next) => {
         }
       }
       if (deleteVideos) {
-        if (typeof(deleteVideos) === "object") {
+        if (typeof deleteVideos === "object") {
           deleteVideos.forEach((videoName) => {
             recipe.recipeVideos.forEach((item, index) => {
               if (item.videoName === videoName) {

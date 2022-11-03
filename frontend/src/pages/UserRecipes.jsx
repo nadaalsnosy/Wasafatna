@@ -1,6 +1,9 @@
-import { useEffect, useContext } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useContext, useState } from "react";
+import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
+
 import { Button } from "@mui/material";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -10,12 +13,18 @@ import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
 
 const UserRecipes = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const { recipes, setRecipes } = useContext(RecipesContext);
   const { id } = useParams();
-  console.log(id);
-
   const { auth } = useAuth();
-  // console.log(auth.user._id);
+
+  let pageNum = location.search.split("?page=")[1];
+  const [page, setPage] = useState(pageNum);
+  const [recipesPageCounter, setRecipesPageCounter] = useState();
+
+
   const getRecipes = async (page, limit, order, sort) => {
     try {
       const res = await axios.get(
@@ -23,15 +32,25 @@ const UserRecipes = () => {
           limit ? `limit=${limit}` : ""
         }&${order ? `order=${order}` : ""}&${sort ? `sort=${sort}` : ""}`
       );
-      setRecipes(res.data);
+      setRecipesPageCounter(res.data.recipesPageCounter);
+      setRecipes(res.data.userRecipes);
     } catch (error) {
       console.log(error);
     }
   };
-  console.log(recipes);
 
   useEffect(() => {
-    getRecipes();
+    getRecipes(page);
+  }, [page]);
+
+  const pageChanges = (e, p) => {
+    navigate(`?page=${p}`);
+    setPage(p);
+  };
+
+  useEffect(() => {
+    getRecipes(pageNum);
+    setPage(location.search.split("?page=")[1]);
   }, []);
 
   return (
@@ -40,7 +59,7 @@ const UserRecipes = () => {
         <div className="container">
           <div className="d-flex flex-column justify-content-between align-items-md-baseline flex-md-row">
             <h1 className="fs-45 text-start m-auto my-5 mx-md-2 text-success">
-              My Recipes
+              {auth?.user?._id === id ? "My Recipes" : "User Recipes"}
             </h1>
             {auth?.user?._id === id && (
               <Link to={"/saveRecipe"}>
@@ -59,6 +78,14 @@ const UserRecipes = () => {
               <RecipeCard key={item._id} item={item} />
             ))}
           </div>
+          <Stack className="container mt-5" spacing={2}>
+            <Pagination
+              count={recipesPageCounter}
+              color="success"
+              onChange={pageChanges}
+              page={+pageNum || 1}
+            />
+          </Stack>
         </div>
       </AnimatedPage>
     </>

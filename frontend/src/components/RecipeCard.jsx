@@ -21,8 +21,8 @@ const RecipeCard = (props) => {
   const defultText =
     "may this content contains images or videos could help you";
   return (
-    <div className="m-auto m-md-0 col-md-6 col-lg-4 p-3">
-      <Card sx={{ maxWidth: 345 }} className="text-center recipe-card">
+    <div className="m-md-0 col-12 col-md-6 col-lg-4 p-3">
+      <Card sx={{ maxWidth: 345 }} className="text-center recipe-card m-auto">
         <CardHeader
           avatar={
             <Link to={`/userRecipes/${item?.createdBy?._id}`}>
@@ -66,7 +66,11 @@ const RecipeCard = (props) => {
           />
           <CardContent>
             <h5>{item?.title}</h5>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              className="card-p"
+              variant="body2"
+              color="text.secondary"
+            >
               {text ? `${text?.substring(0, 200)}...` : defultText}
             </Typography>
           </CardContent>

@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 
@@ -8,34 +8,39 @@ import IconsSlider from "../components/IconsSlider";
 
 import { RecipesContext } from "../context/RecipesModule";
 
-const Home = () => {
-  const { recipes, setRecipes } = useContext(RecipesContext);
-  const { auth } = useAuth();
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
+import { useLocation, useNavigate } from "react-router-dom";
 
-  const getRecipes = async (page, limit, order, sort) => {
-    try {
-      const res = await axios.get(
-        `/recipes?${page ? `page=${page}` : ""}&${
-          limit ? `limit=${limit}` : ""
-        }&${order ? `order=${order}` : ""}&${sort ? `sort=${sort}` : ""}`
-      );
-      setRecipes(res.data);
-    } catch (error) {
-      console.log(error);
-    }
+const Home = () => {
+  const { recipes, setRecipes, getRecipes, recipesPageCounter } =
+    useContext(RecipesContext);
+  const { auth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  let pageNum = location.search.split("?page=")[1];
+
+  const [page, setPage] = useState(pageNum);
+
+  useEffect(() => {
+    getRecipes(page);
+  }, [page]);
+
+  const pageChanges = (e, p) => {
+    navigate(`?page=${p}`);
+    setPage(p);
   };
 
   useEffect(() => {
-    getRecipes();
+    getRecipes(pageNum);
+    setPage(location.search.split("?page=")[1]);
   }, []);
-
-  console.log(recipes);
 
   return (
     <>
       <AnimatedPage>
         <div className="position-relative">
-          <div className="overLay">{/* <h1>Welcome To WasaFatna</h1> */}</div>
+          <div className="overLay"></div>
           <IconsSlider />
         </div>
         <div className="container d-flex flex-wrap mt-5">
@@ -43,6 +48,14 @@ const Home = () => {
             <RecipeCard key={item._id} item={item} />
           ))}
         </div>
+        <Stack className="container mt-5" spacing={2}>
+          <Pagination
+            count={recipesPageCounter}
+            color="success"
+            onChange={pageChanges}
+            page={+pageNum || 1}
+          />
+        </Stack>
       </AnimatedPage>
     </>
   );

@@ -60,6 +60,7 @@ const login = async (req, res, next) => {
     next(error);
   }
 };
+
 const changePassword = async (req, res, next) => {
   const { userPassword, newPassword } = req.body;
   try {

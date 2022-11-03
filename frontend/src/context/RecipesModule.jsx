@@ -23,6 +23,8 @@ const RecipesModule = () => {
   const { auth, setAuth } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [recipe, setRecipe] = useState();
+  const [recipesPageCounter, setRecipesPageCounter] = useState();
+
   const [filterRecipes, setFilterRecipes] = useState([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -33,15 +35,13 @@ const RecipesModule = () => {
           limit ? `limit=${limit}` : ""
         }&${order ? `order=${order}` : ""}&${sort ? `sort=${sort}` : ""}`
       );
+      setRecipesPageCounter(res.data.recipesPageCounter);
+      setRecipes(res.data.recipes);
       return res.data;
     } catch (error) {
       console.log(error);
     }
   };
-
-  // useEffect(() => {
-  //   setAuth(auth);
-  // }, [auth]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getRecipe = async (id) => {
@@ -59,6 +59,7 @@ const RecipesModule = () => {
       getRecipe,
       recipe,
       setRecipe,
+      recipesPageCounter,
       getRecipes,
       recipes,
       setRecipes,
@@ -69,6 +70,7 @@ const RecipesModule = () => {
       getRecipe,
       recipe,
       setRecipe,
+      recipesPageCounter,
       getRecipes,
       recipes,
       setRecipes,
