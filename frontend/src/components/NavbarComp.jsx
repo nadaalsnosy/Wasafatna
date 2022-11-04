@@ -19,6 +19,7 @@ import { useEffect, useState } from "react";
 const NavbarComp = () => {
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
+  const [keyword, setKeyword] = useState("");
 
   // const [UserInfo, setUserInfo] = useState();
   // console.log(auth);
@@ -72,16 +73,19 @@ const NavbarComp = () => {
             <Form className="d-flex position-relative max-w-300 align-items-center flex-grow-1">
               <FormControl
                 type="text"
-                // value={keyword}
+                value={keyword}
                 // ref={searchRef}
-                // onChange={(e) => setKeyword(e.target.value)}
+                onChange={(e) => setKeyword(e.target.value)}
                 placeholder="Search Recipes "
                 className="me-2 searchInput"
                 aria-label="Search"
               />
-              {/* <Link to={`/search/:${keyword}`}> */}
-              <SearchOutlinedIcon className="icon position-absolute right-15 text-success" />
-              {/* </Link> */}
+              <Link
+                className="icon position-absolute right-15 text-success"
+                to={`${keyword ? `/search/${keyword}` : ``}`}
+              >
+                <SearchOutlinedIcon />
+              </Link>
             </Form>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
           </div>

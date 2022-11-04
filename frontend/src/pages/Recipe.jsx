@@ -6,7 +6,7 @@ import { Button, CardHeader, Avatar } from "@mui/material";
 
 import useAuth from "../hooks/useAuth";
 import AnimatedPage from "../components/AnimatedPage";
-import { RecipesModule } from "../context/RecipesModule";
+import RecipesContext from "../context/RecipesModule";
 
 import recipeDefultImg from "../images/foodIcon.png";
 import userDefultImg from "../images/userIcon.png";
@@ -14,7 +14,7 @@ import userDefultImg from "../images/userIcon.png";
 const Recipe = () => {
   const { auth } = useAuth();
   const { id } = useParams();
-  const { recipe, getRecipe } = useContext(RecipesModule);
+  const { recipe, getRecipe } = useContext(RecipesContext);
 
   useEffect(() => {
     getRecipe(id);

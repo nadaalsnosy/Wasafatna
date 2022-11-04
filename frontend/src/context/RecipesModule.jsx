@@ -14,13 +14,13 @@ export const RecipesModule = ({ children }) => {
   const [emptyData, setEmptyData] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getRecipes = async (id, page, genre, order, limit, sort) => {
+  const getRecipes = async (id, page, genre, order, search, sort) => {
     try {
       const res = await axios.get(
         `${id ? `recipes/userRecipes/${id}` : `/recipes`}?${
           page ? `page=${page}` : ""
         }&${genre ? `genre=${genre}` : ""}&${order ? `order=${order}` : ""}&${
-          limit ? `limit=${limit}` : ""
+          search ? `search=${search}` : ""
         }&${sort ? `sort=${sort}` : ""}`
       );
       if (res.data.recipes.length === 0) {

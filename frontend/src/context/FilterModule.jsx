@@ -15,18 +15,24 @@ export const FilterModule = ({ children }) => {
   let order = query.get("order") || "";
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const pageChanges = (e, p, id) => {
-    console.log(id);
+  const pageChanges = (e, p, id, keyword) => {
+    console.log(keyword);
     query.set("page", p);
     navigate(
       `${
-        id ? `/userRecipes/${id}?${query.toString()}` : `/?${query.toString()}`
+        id
+          ? `/userRecipes/${id}?${query.toString()}`
+          : `${
+              keyword
+                ? `/search/${keyword}?${query.toString()}`
+                : `/?${query.toString()}`
+            }`
       }`
     );
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleChangeValue = (e, id) => {
+  const handleChangeValue = (e, id, keyword) => {
     const val = e.target.value;
     const name = e.target.name;
 
@@ -35,7 +41,13 @@ export const FilterModule = ({ children }) => {
     query.set("page", 1);
     navigate(
       `${
-        id ? `/userRecipes/${id}?${query.toString()}` : `/?${query.toString()}`
+        id
+          ? `/userRecipes/${id}?${query.toString()}`
+          : `${
+              keyword
+                ? `/search/${keyword}?${query.toString()}`
+                : `/?${query.toString()}`
+            }`
       }`
     );
   };

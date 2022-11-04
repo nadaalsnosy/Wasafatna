@@ -20,7 +20,15 @@ const getAll = async (req, res, next) => {
     sortBy[sort] = order;
     sortBy["title"] = 1;
 
-    const filterRecipes = [{ title: { $regex: search } }];
+    const filterRecipes = [
+      {
+        $or: [
+          { title: { $regex: search } },
+          { ingredients: { $regex: search } },
+          { instructions: { $regex: search } },
+        ],
+      },
+    ];
     if (genre) filterRecipes.push({ genre: genre });
 
     const recipesLength = (

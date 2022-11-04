@@ -7,7 +7,7 @@ import BackupIcon from "@mui/icons-material/Backup";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 import AnimatedPage from "../components/AnimatedPage";
-import { RecipesModule } from "../context/RecipesModule";
+import RecipesContext from "../context/RecipesModule";
 import useAuth from "../hooks/useAuth";
 import axios from "../api/axios";
 
@@ -31,7 +31,7 @@ const SaveRecipe = () => {
   const [validated, setValidated] = useState(false);
 
   const { setRecipes, setRecipe, recipe, getRecipe } =
-    useContext(RecipesModule);
+    useContext(RecipesContext);
 
   const [currentRecipe, setCurrentRecipe] = useState(defaultRecipe);
 
