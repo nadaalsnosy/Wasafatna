@@ -1,50 +1,41 @@
-import { Routes, Route, useLocation } from "react-router-dom";
-import { useMemo, createContext, useState, useEffect } from "react";
+import { useMemo, createContext, useState } from "react";
+import { useParams } from "react-router-dom";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
-// import RequireAuth from "./Auth/RequireAuth";
 
-import NavbarComp from "../components/NavbarComp";
+const RecipesContext = createContext();
 
-import Home from "../pages/Home";
-import NotFound from "../pages/NotFound";
-import Recipe from "../pages/Recipe";
-
-import Profile from "../pages/Profile";
-import Favourite from "../pages/Favourite";
-import UserRecipes from "../pages/UserRecipes";
-import SaveRecipe from "../pages/SaveRecipe";
-
-export const RecipesContext = createContext();
-
-const RecipesModule = () => {
-  const location = useLocation();
+export const RecipesModule = ({ children }) => {
   const { auth, setAuth } = useAuth();
   const [recipes, setRecipes] = useState([]);
-  const [recipe, setRecipe] = useState();
   const [recipesPageCounter, setRecipesPageCounter] = useState();
-
-  const [filterRecipes, setFilterRecipes] = useState([]);
+  const [recipe, setRecipe] = useState();
+  const [emptyData, setEmptyData] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getRecipes = async (page, genre, order, limit, sort) => {
+  const getRecipes = async (id, page, genre, order, limit, sort) => {
     try {
       const res = await axios.get(
-        `/recipes?${page ? `page=${page}` : ""}&${
-          genre ? `genre=${genre}` : ""
-        }&${order ? `order=${order}` : ""}&${limit ? `limit=${limit}` : ""}&${
-          sort ? `sort=${sort}` : ""
-        }`
+        `${id ? `recipes/userRecipes/${id}` : `/recipes`}?${
+          page ? `page=${page}` : ""
+        }&${genre ? `genre=${genre}` : ""}&${order ? `order=${order}` : ""}&${
+          limit ? `limit=${limit}` : ""
+        }&${sort ? `sort=${sort}` : ""}`
       );
-      setRecipesPageCounter(res.data.recipesPageCounter);
-      setRecipes(res.data.recipes);
+      if (res.data.recipes.length === 0) {
+        setEmptyData(true);
+      } else {
+        setEmptyData(false);
+        setRecipesPageCounter(res.data.recipesPageCounter);
+        setRecipes(res.data.recipes);
+      }
       return res.data;
     } catch (error) {
       console.log(error);
     }
   };
-
+  console.log(recipes);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getRecipe = async (id) => {
     try {
@@ -65,8 +56,7 @@ const RecipesModule = () => {
       getRecipes,
       recipes,
       setRecipes,
-      filterRecipes,
-      setFilterRecipes,
+      emptyData,
     }),
     [
       getRecipe,
@@ -76,30 +66,15 @@ const RecipesModule = () => {
       getRecipes,
       recipes,
       setRecipes,
-      filterRecipes,
-      setFilterRecipes,
+      emptyData,
     ]
   );
 
   return (
     <RecipesContext.Provider value={contextValue}>
-      <NavbarComp />
-      <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<Home />} />
-        <Route path="*" element={<NotFound />} />
-        <Route path="/recipe/:id" element={<Recipe />} />
-
-        {/* <Route element={<RequireAuth />}> */}
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/favourite" element={<Favourite />} />
-        <Route path="/userRecipes/:id" element={<UserRecipes />} />
-        <Route path="/saveRecipe" element={<SaveRecipe />} />
-        <Route path="/editRecipe/:id" element={<SaveRecipe />} />
-
-        {/* </Route> */}
-      </Routes>
+      {children}
     </RecipesContext.Provider>
   );
 };
 
-export default RecipesModule;
+export default RecipesContext;

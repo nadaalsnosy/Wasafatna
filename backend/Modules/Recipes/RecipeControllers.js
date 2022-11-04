@@ -83,7 +83,7 @@ const getUserRecipes = async (req, res, next) => {
       recipesPageCounter = (recipesLength - rest + limit) / limit;
     }
 
-    const userRecipes = await Recipe.find({ $and: filterRecipes })
+    const recipes = await Recipe.find({ $and: filterRecipes })
       .limit(limit)
       .skip(page * limit)
       .sort(sortBy)
@@ -92,7 +92,7 @@ const getUserRecipes = async (req, res, next) => {
         select: ["username", "userImg"],
       });
 
-    res.send({ userRecipes, recipesPageCounter });
+    res.send({ recipes, recipesPageCounter });
   } catch (error) {
     error.statusCode = 403;
     next(error);

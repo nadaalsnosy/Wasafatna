@@ -6,28 +6,29 @@ import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
 import IconsSlider from "../components/IconsSlider";
 
-import { RecipesContext } from "../context/RecipesModule";
+import RecipesContext from "../context/RecipesModule";
 
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { MenuItem, FormControl, Select, Button } from "@mui/material";
 
-import { useLocation, useNavigate, createSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { recipes, setRecipes, getRecipes, recipesPageCounter } =
+  const { recipes, getRecipes, recipesPageCounter } =
     useContext(RecipesContext);
+
   const { auth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
 
-  let page = query.get("page");
-  let genre = query.get("genre");
+  let page = query.get("page") || "";
+  let genre = query.get("genre") || "";
   let order = query.get("order") || "";
 
   useEffect(() => {
-    getRecipes(page, genre, order);
+    getRecipes("", page, genre, order);
   }, [page, genre, order]);
 
   const pageChanges = (e, p) => {
@@ -37,7 +38,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-    getRecipes(page, genre, order);
+    getRecipes("", page, genre, order);
   }, []);
 
   const handleChangeValue = (e) => {

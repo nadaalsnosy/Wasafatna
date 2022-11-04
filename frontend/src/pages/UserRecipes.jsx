@@ -1,16 +1,17 @@
 import { useEffect, useContext, useState } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 
-// import { Button } from "@mui/material";
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import { MenuItem, FormControl, Select, Button } from "@mui/material";
+import {
+  MenuItem,
+  FormControl,
+  Select,
+  Button,
+  Stack,
+  Pagination,
+} from "@mui/material";
 
-import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
-import { RecipesContext } from "../context/RecipesModule";
+import RecipesContext from "../context/RecipesModule";
 
 import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
@@ -19,44 +20,20 @@ const UserRecipes = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { recipes, setRecipes } = useContext(RecipesContext);
+  const { recipes, emptyData, getRecipes, recipesPageCounter } =
+    useContext(RecipesContext);
   const { id } = useParams();
   const { auth } = useAuth();
 
   const query = new URLSearchParams(location.search);
-  const [emptyData, setEmptyData] = useState(false);
 
   let page = query.get("page") || "";
   let genre = query.get("genre") || "";
   let order = query.get("order") || "";
 
-  const [recipesPageCounter, setRecipesPageCounter] = useState();
-
-  const getRecipes = async (page, genre, order, limit, sort) => {
-    try {
-      const res = await axios.get(
-        `recipes/userRecipes/${id}?${page ? `page=${page}` : ""}&${
-          genre ? `genre=${genre}` : ""
-        }&${order ? `order=${order}` : ""}&${limit ? `limit=${limit}` : ""}&${
-          sort ? `sort=${sort}` : ""
-        }`
-      );
-      console.log(res.data.userRecipes.length);
-      if (res.data.userRecipes.length === 0) {
-        setEmptyData(true);
-      } else {
-        setEmptyData(false);
-        setRecipesPageCounter(res.data.recipesPageCounter);
-        setRecipes(res.data.userRecipes);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
-    getRecipes(page, genre, order);
-  }, [page, genre, order]);
+    getRecipes(id, page, genre, order);
+  }, [id, page, genre, order]);
 
   const pageChanges = (e, p) => {
     query.set("page", p);
@@ -64,7 +41,7 @@ const UserRecipes = () => {
   };
 
   useEffect(() => {
-    getRecipes(page, genre, order);
+    getRecipes(id, page, genre, order);
   }, []);
 
   const handleChangeValue = (e) => {
