@@ -1,55 +1,33 @@
-import { useContext, useEffect, useState } from "react";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
+import { useContext, useEffect } from "react";
 
 import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
 import IconsSlider from "../components/IconsSlider";
 
 import RecipesContext from "../context/RecipesModule";
+import FilterContext from "../context/FilterModule";
 
-import Pagination from "@mui/material/Pagination";
-import Stack from "@mui/material/Stack";
-import { MenuItem, FormControl, Select, Button } from "@mui/material";
-
-import { useLocation, useNavigate } from "react-router-dom";
+import {
+  MenuItem,
+  FormControl,
+  Select,
+  Stack,
+  Pagination,
+} from "@mui/material";
 
 const Home = () => {
   const { recipes, getRecipes, recipesPageCounter } =
     useContext(RecipesContext);
-
-  const { auth } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-
-  let page = query.get("page") || "";
-  let genre = query.get("genre") || "";
-  let order = query.get("order") || "";
+  const { handleChangeValue, pageChanges, order, genre, page } =
+    useContext(FilterContext);
 
   useEffect(() => {
     getRecipes("", page, genre, order);
   }, [page, genre, order]);
 
-  const pageChanges = (e, p) => {
-    query.set("page", p);
-    // if (genre) query.set("genre", genre);
-    navigate(`/?${query.toString()}`);
-  };
-
   useEffect(() => {
     getRecipes("", page, genre, order);
   }, []);
-
-  const handleChangeValue = (e) => {
-    const val = e.target.value;
-    const name = e.target.name;
-
-    if (name === "genre") query.set("genre", val);
-    if (name === "order") query.set("order", val);
-    query.set("page", 1);
-    navigate(`/?${query.toString()}`);
-  };
 
   return (
     <>
@@ -64,7 +42,7 @@ const Home = () => {
               className="w-100"
               name="genre"
               value={genre}
-              onChange={handleChangeValue}
+              onChange={(e) => handleChangeValue(e)}
               displayEmpty
               inputProps={{ "aria-label": "Without label" }}
             >
@@ -85,7 +63,7 @@ const Home = () => {
               className="w-100"
               name="order"
               value={order}
-              onChange={handleChangeValue}
+              onChange={(e) => handleChangeValue(e)}
               displayEmpty
               inputProps={{ "aria-label": "Without label" }}
             >
@@ -106,7 +84,7 @@ const Home = () => {
           <Pagination
             count={recipesPageCounter}
             color="success"
-            onChange={pageChanges}
+            onChange={(e, p) => pageChanges(e, p)}
             page={+page || 1}
           />
         </Stack>

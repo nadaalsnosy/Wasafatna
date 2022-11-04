@@ -9,6 +9,7 @@ import RequireLoggedAut from "./Auth/RequireLoggedAut";
 
 import { AuthProvider } from "./context/AuthProvider";
 import { RecipesModule } from "./context/RecipesModule";
+import { FilterModule } from "./context/FilterModule";
 
 import Login from "./context/Login";
 import PagesRoutes from "./context/PagesRoutes";
@@ -28,13 +29,15 @@ const App = () => {
         <BrowserRouter>
           <AuthProvider>
             <RecipesModule>
-              <Routes>
-                <Route element={<RequireLoggedAut />}>
-                  <Route path="/api/*" element={<Login />} />
-                </Route>
-                <Route path="*" element={<PagesRoutes />} />
-              </Routes>
-              <Footer />
+              <FilterModule>
+                <Routes>
+                  <Route element={<RequireLoggedAut />}>
+                    <Route path="/api/*" element={<Login />} />
+                  </Route>
+                  <Route path="*" element={<PagesRoutes />} />
+                </Routes>
+                <Footer />
+              </FilterModule>
             </RecipesModule>
           </AuthProvider>
         </BrowserRouter>

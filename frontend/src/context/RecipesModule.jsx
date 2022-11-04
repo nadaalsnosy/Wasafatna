@@ -35,7 +35,7 @@ export const RecipesModule = ({ children }) => {
       console.log(error);
     }
   };
-  console.log(recipes);
+  
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getRecipe = async (id) => {
     try {

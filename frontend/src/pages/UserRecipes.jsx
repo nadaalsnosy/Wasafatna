@@ -1,5 +1,5 @@
-import { useEffect, useContext, useState } from "react";
-import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useContext } from "react";
+import { Link, useParams } from "react-router-dom";
 
 import {
   MenuItem,
@@ -12,47 +12,27 @@ import {
 
 import useAuth from "../hooks/useAuth";
 import RecipesContext from "../context/RecipesModule";
+import FilterContext from "../context/FilterModule";
 
 import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
 
 const UserRecipes = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const { recipes, emptyData, getRecipes, recipesPageCounter } =
-    useContext(RecipesContext);
   const { id } = useParams();
   const { auth } = useAuth();
 
-  const query = new URLSearchParams(location.search);
-
-  let page = query.get("page") || "";
-  let genre = query.get("genre") || "";
-  let order = query.get("order") || "";
+  const { recipes, emptyData, getRecipes, recipesPageCounter } =
+    useContext(RecipesContext);
+  const { handleChangeValue, pageChanges, order, genre, page } =
+    useContext(FilterContext);
 
   useEffect(() => {
     getRecipes(id, page, genre, order);
   }, [id, page, genre, order]);
 
-  const pageChanges = (e, p) => {
-    query.set("page", p);
-    navigate(`/userRecipes/${id}?${query.toString()}`);
-  };
-
   useEffect(() => {
     getRecipes(id, page, genre, order);
   }, []);
-
-  const handleChangeValue = (e) => {
-    const val = e.target.value;
-    const name = e.target.name;
-
-    if (name === "genre") query.set("genre", val);
-    if (name === "order") query.set("order", val);
-    query.set("page", 1);
-    navigate(`/userRecipes/${id}?${query.toString()}`);
-  };
 
   return (
     <>
@@ -83,7 +63,7 @@ const UserRecipes = () => {
                 className="w-100"
                 name="genre"
                 value={genre}
-                onChange={handleChangeValue}
+                onChange={(e) => handleChangeValue(e, id)}
                 displayEmpty
                 inputProps={{ "aria-label": "Without label" }}
               >
@@ -104,7 +84,7 @@ const UserRecipes = () => {
                 className="w-100"
                 name="order"
                 value={order}
-                onChange={handleChangeValue}
+                onChange={(e) => handleChangeValue(e, id)}
                 displayEmpty
                 inputProps={{ "aria-label": "Without label" }}
               >
@@ -133,7 +113,8 @@ const UserRecipes = () => {
                 <Pagination
                   count={recipesPageCounter}
                   color="success"
-                  onChange={pageChanges}
+                  onChange={(e, p) => pageChanges(e, p, id)}
+                  // onChange={pageChanges}
                   page={+page || 1}
                 />
               </Stack>
