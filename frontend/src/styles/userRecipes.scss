@@ -1,0 +1,27 @@
+.filterOptions {
+  display: flex;
+  justify-content: flex-end;
+  margin: 20px;
+}
+
+.filterOptions .selectInput {
+  width: 110px;
+}
+
+.filterOptions .genreType .notranslate:after {
+  content: "Genre";
+}
+
+.filterOptions .sortBy .notranslate:after {
+  content: "Sort By";
+}
+
+.noDataP {
+  font-size: 30px;
+  margin: 100px 10px;
+  color: #329449;
+}
+
+.css-6hp17o-MuiList-root-MuiMenu-list:has(.orderItem) {
+  height: fit-content !important;
+}

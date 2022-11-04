@@ -431,7 +431,7 @@ const SaveRecipe = () => {
 
             <Form.Group className={`mb-5`}>
               <Form.Label>Genre</Form.Label>
-              <FormControl className="d-block">
+              <FormControl className="d-block selectInput">
                 <Select
                   className="w-100"
                   name="genre"

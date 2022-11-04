@@ -1,9 +1,12 @@
 import { useEffect, useContext, useState } from "react";
 import { Link, useParams, useNavigate, useLocation } from "react-router-dom";
 
-import { Button } from "@mui/material";
+// import { Button } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
+import { MenuItem, FormControl, Select, Button } from "@mui/material";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -20,42 +23,59 @@ const UserRecipes = () => {
   const { id } = useParams();
   const { auth } = useAuth();
 
-  // let pageNum = location.search.split("?page=")[1];
-  // const [page, setPage] = useState(pageNum);
   const query = new URLSearchParams(location.search);
-  let page = query.get("page");
+  const [emptyData, setEmptyData] = useState(false);
+
+  let page = query.get("page") || "";
+  let genre = query.get("genre") || "";
+  let order = query.get("order") || "";
+
   const [recipesPageCounter, setRecipesPageCounter] = useState();
 
-  const getRecipes = async (page, limit, order, sort) => {
+  const getRecipes = async (page, genre, order, limit, sort) => {
     try {
       const res = await axios.get(
         `recipes/userRecipes/${id}?${page ? `page=${page}` : ""}&${
-          limit ? `limit=${limit}` : ""
-        }&${order ? `order=${order}` : ""}&${sort ? `sort=${sort}` : ""}`
+          genre ? `genre=${genre}` : ""
+        }&${order ? `order=${order}` : ""}&${limit ? `limit=${limit}` : ""}&${
+          sort ? `sort=${sort}` : ""
+        }`
       );
-      setRecipesPageCounter(res.data.recipesPageCounter);
-      setRecipes(res.data.userRecipes);
+      console.log(res.data.userRecipes.length);
+      if (res.data.userRecipes.length === 0) {
+        setEmptyData(true);
+      } else {
+        setEmptyData(false);
+        setRecipesPageCounter(res.data.recipesPageCounter);
+        setRecipes(res.data.userRecipes);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getRecipes(page);
-  }, [page]);
+    getRecipes(page, genre, order);
+  }, [page, genre, order]);
 
   const pageChanges = (e, p) => {
-    // navigate(`?page=${p}`);
-    // setPage(p);
-
     query.set("page", p);
-    navigate(`/userRecipes/${id}/?${query.toString()}`);
+    navigate(`/userRecipes/${id}?${query.toString()}`);
   };
 
   useEffect(() => {
-    getRecipes(page);
-    // setPage(location.search.split("?page=")[1]);
+    getRecipes(page, genre, order);
   }, []);
+
+  const handleChangeValue = (e) => {
+    const val = e.target.value;
+    const name = e.target.name;
+
+    if (name === "genre") query.set("genre", val);
+    if (name === "order") query.set("order", val);
+    query.set("page", 1);
+    navigate(`/userRecipes/${id}?${query.toString()}`);
+  };
 
   return (
     <>
@@ -66,7 +86,10 @@ const UserRecipes = () => {
               {auth?.user?._id === id ? "My Recipes" : "User Recipes"}
             </h1>
             {auth?.user?._id === id && (
-              <Link to={"/saveRecipe"}>
+              <Link
+                to={"/saveRecipe"}
+                className={`fit-content m-auto m-md-0 ms-md-auto`}
+              >
                 <Button
                   className="mb-3 m-md-0 me-md-4"
                   variant="contained"
@@ -77,19 +100,68 @@ const UserRecipes = () => {
               </Link>
             )}
           </div>
-          <div className="container d-flex flex-wrap">
-            {recipes?.map((item) => (
-              <RecipeCard key={item._id} item={item} />
-            ))}
+          <div className="filterOptions">
+            <FormControl className="d-block ms-3 selectInput genreType">
+              <Select
+                className="w-100"
+                name="genre"
+                value={genre}
+                onChange={handleChangeValue}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem value="all">ِAll</MenuItem>
+                <MenuItem value="breakfast">Breakfast</MenuItem>
+                <MenuItem value="desserts">Desserts</MenuItem>
+                <MenuItem value="juices">Juices</MenuItem>
+                <MenuItem value="meals">Meals</MenuItem>
+                <MenuItem value="pastries">Pastries</MenuItem>
+                <MenuItem value="salad">Salad</MenuItem>
+                <MenuItem value="others">Others</MenuItem>
+                <MenuItem className="d-none" value=""></MenuItem>
+              </Select>
+            </FormControl>
+
+            <FormControl className="d-block ms-3 selectInput sortBy">
+              <Select
+                className="w-100"
+                name="order"
+                value={order}
+                onChange={handleChangeValue}
+                displayEmpty
+                inputProps={{ "aria-label": "Without label" }}
+              >
+                <MenuItem className="orderItem" value="-1">
+                  Newest
+                </MenuItem>
+                <MenuItem value="1">Oldest</MenuItem>
+                <MenuItem className="d-none" value=""></MenuItem>
+              </Select>
+            </FormControl>
           </div>
-          <Stack className="container mt-5" spacing={2}>
-            <Pagination
-              count={recipesPageCounter}
-              color="success"
-              onChange={pageChanges}
-              page={+page || 1}
-            />
-          </Stack>
+
+          {emptyData ? (
+            <p className="noDataP">
+              There ara No Recipes in Category{" "}
+              <span className="text-capitalize">{genre}</span>
+            </p>
+          ) : (
+            <>
+              <div className="container d-flex flex-wrap">
+                {recipes?.map((item) => (
+                  <RecipeCard key={item._id} item={item} />
+                ))}
+              </div>
+              <Stack className="container mt-5" spacing={2}>
+                <Pagination
+                  count={recipesPageCounter}
+                  color="success"
+                  onChange={pageChanges}
+                  page={+page || 1}
+                />
+              </Stack>
+            </>
+          )}
         </div>
       </AnimatedPage>
     </>

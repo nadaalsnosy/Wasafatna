@@ -10,7 +10,11 @@ const getAll = async (req, res, next) => {
 
     const sort = req.query.sort || "createdAt";
     const search = req.query.search || "";
-    const genre = req.query.genre || "";
+    let genre = req.query.genre || "";
+
+    if (genre === "all") {
+      genre = "";
+    }
 
     let sortBy = {};
     sortBy[sort] = order;
@@ -53,13 +57,22 @@ const getUserRecipes = async (req, res, next) => {
     const page = parseInt(req.query.page) - 1 || 0;
     const limit = parseInt(req.query.limit) || 5;
     const order = parseInt(req.query.order) || -1;
+
     const sort = req.query.sort || "createdAt";
+    let genre = req.query.genre || "";
+
+    if (genre === "all") {
+      genre = "";
+    }
 
     let sortBy = {};
     sortBy[sort] = order;
     sortBy["title"] = 1;
 
-    const recipesLength = (await Recipe.find({ createdBy: id })).length;
+    const filterRecipes = [{ createdBy: id }];
+    if (genre) filterRecipes.push({ genre: genre });
+
+    const recipesLength = (await Recipe.find({ $and: filterRecipes })).length;
 
     let recipesPageCounter;
 
@@ -70,7 +83,7 @@ const getUserRecipes = async (req, res, next) => {
       recipesPageCounter = (recipesLength - rest + limit) / limit;
     }
 
-    const userRecipes = await Recipe.find({ createdBy: id })
+    const userRecipes = await Recipe.find({ $and: filterRecipes })
       .limit(limit)
       .skip(page * limit)
       .sort(sortBy)

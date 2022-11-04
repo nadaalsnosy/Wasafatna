@@ -28,12 +28,12 @@ const RecipesModule = () => {
   const [filterRecipes, setFilterRecipes] = useState([]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getRecipes = async (page, genre, limit, order, sort) => {
+  const getRecipes = async (page, genre, order, limit, sort) => {
     try {
       const res = await axios.get(
         `/recipes?${page ? `page=${page}` : ""}&${
           genre ? `genre=${genre}` : ""
-        }&${limit ? `limit=${limit}` : ""}&${order ? `order=${order}` : ""}&${
+        }&${order ? `order=${order}` : ""}&${limit ? `limit=${limit}` : ""}&${
           sort ? `sort=${sort}` : ""
         }`
       );
