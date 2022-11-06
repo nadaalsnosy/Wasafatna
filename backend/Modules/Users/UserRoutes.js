@@ -9,12 +9,15 @@ const {
   updateUser,
   deleteUser,
   changePassword,
+  userList,
 } = require("./UserControllers");
 const upload = require("../Uploads");
 
-//get all for admin only
+//get
 userRouter.get("/", verifyToken, getUsers);
 userRouter.get("/profile", verifyToken, profile);
+userRouter.get("/userList", verifyToken, userList);
+
 //
 userRouter.post(
   "/signUp",
@@ -24,6 +27,7 @@ userRouter.post(
   signUp
 );
 userRouter.post("/signIn", login);
+
 //update
 userRouter.patch(
   "/",
@@ -33,13 +37,7 @@ userRouter.patch(
   passwordHash,
   updateUser
 );
+userRouter.post("/changePass", verifyToken, passwordHash, changePassword);
 userRouter.delete("/:id", verifyToken, deleteUser);
-userRouter.post(
-  "/changePass",
-  // upload.any(),
-  verifyToken,
-  passwordHash,
-  changePassword
-);
 
 module.exports = userRouter;

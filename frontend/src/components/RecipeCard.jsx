@@ -14,12 +14,37 @@ import {
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { Link } from "react-router-dom";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
 
 const RecipeCard = (props) => {
   let { item } = props;
+  const { auth, setAuth } = useAuth();
+
   const text = item?.ingredients + item?.instructions;
   const defultText =
     "may this content contains images or videos could help you";
+
+  const addFavourite = async () => {
+    console.log(item);
+
+    try {
+      const resFiles = await axios.patch(
+        `/users/`,
+        { userListItem: item._id },
+        {
+          headers: {
+            Authorization: `${auth.token}`,
+          },
+        }
+      );
+
+      setAuth({ ...auth, user: resFiles.data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="m-md-0 col-12 col-md-6 col-lg-4 p-3">
       <Card sx={{ maxWidth: 345 }} className="text-center recipe-card m-auto">
@@ -40,7 +65,15 @@ const RecipeCard = (props) => {
             </Link>
           }
           action={
-            <IconButton aria-label="add to favorites">
+            <IconButton
+              className={
+                auth.user?.userList?.find((favItem) => favItem === item._id)
+                  ? "text-danger"
+                  : ""
+              }
+              aria-label="add to favorites"
+              onClick={addFavourite}
+            >
               <FavoriteIcon />
             </IconButton>
           }

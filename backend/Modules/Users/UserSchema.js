@@ -27,9 +27,7 @@ const userSchema = new Schema({
   userImg: {
     type: String,
   },
-  userList: {
-    type: Array,
-  },
+  userList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Recipes" }],
 
   isAdmin: {
     type: Boolean,

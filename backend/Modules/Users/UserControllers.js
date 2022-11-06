@@ -3,22 +3,13 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const util = require("util");
 const User = require("./UserModel");
+const Recipe = require("../Recipes/RecipeModel");
 const asynSign = util.promisify(jwt.sign);
 
 const signUp = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
     const newUser = new User({ username, email, password });
-    // if (req.file) {
-    //   if (
-    //     req.file.mimetype === "image/jpeg" ||
-    //     req.file.mimetype === "image/png"
-    //   ) {
-    //     newUser.userImg = req.file.path;
-    //   } else {
-    //     throw new Error(`You must add jpeg or png only!`);
-    //   }
-    // }
 
     const { id: uID } = newUser;
     const token = await asynSign(
@@ -26,7 +17,7 @@ const signUp = async (req, res, next) => {
       process.env.SECRET_KEY
     );
 
-    const createdUser = await newUser.save();
+    const createdUser = await await newUser.save();
     res.send({ token, createdUser });
   } catch (error) {
     error.statusCode = 500;
@@ -103,9 +94,29 @@ const getUsers = async (req, res, next) => {
 const profile = async (req, res, next) => {
   try {
     const { id } = req.userPayload;
-    const { username, email, userImg } = await User.findById(id);
+    const { username, email, userImg, userList } = await User.findById(id);
 
-    res.send({ username, email, userImg });
+    res.send({ username, email, userImg, userList });
+  } catch (error) {
+    error.statusCode = 403;
+    next(error);
+  }
+};
+
+const userList = async (req, res, next) => {
+  try {
+    const { id } = req.userPayload;
+    const { userList } = await User.findById(id);
+
+    const listFilter = [];
+    userList.forEach((item) => listFilter.push({ _id: item }));
+
+    const favouriteList = await Recipe.find({ $or: listFilter }).populate({
+      path: "createdBy",
+      select: ["username", "userImg"],
+    });
+
+    res.send(favouriteList);
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -127,12 +138,19 @@ const updateUser = async (req, res, next) => {
     }
     const user = await User.findById(userId);
 
+    // if (userListItem) {
+    //   const exists = user.userList.some(
+    //     (item) => item._id === userListItem._id
+    //   );
+    //   user.userList = exists
+    //     ? user.userList.filter((item) => item._id !== userListItem._id)
+    //     : [...user.userList, userListItem];
+    // }
+
     if (userListItem) {
-      const exists = user.userList.some(
-        (item) => item._id === userListItem._id
-      );
+      const exists = user.userList.some((item) => item == userListItem);
       user.userList = exists
-        ? user.userList.filter((item) => item._id !== userListItem._id)
+        ? user.userList.filter((item) => item != userListItem)
         : [...user.userList, userListItem];
     }
 
@@ -196,4 +214,5 @@ module.exports = {
   updateUser,
   deleteUser,
   changePassword,
+  userList,
 };
