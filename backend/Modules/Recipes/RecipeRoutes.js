@@ -9,12 +9,17 @@ const {
   getOne,
   getAll,
   getUserRecipes,
+  getRecipes,
 } = require("./RecipeControllers");
 
 //get
-recipeRouter.get("/", getAll);
-recipeRouter.get("/:id", getOne);
-recipeRouter.get("/userRecipes/:id", getUserRecipes);
+recipeRouter.get("/", verifyToken, getRecipes);
+recipeRouter.get("/:id", verifyToken, getRecipes);
+// recipeRouter.get("/userRecipes/:id", getRecipes);
+
+// recipeRouter.get("/", getAll);
+// recipeRouter.get("/userRecipes/:id", getUserRecipes);
+recipeRouter.get("/specificRecipe/:id", getOne);
 
 //
 recipeRouter.post(

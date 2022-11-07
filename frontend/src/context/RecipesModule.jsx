@@ -1,5 +1,4 @@
 import { useMemo, createContext, useState } from "react";
-import { useParams } from "react-router-dom";
 
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
@@ -7,21 +6,26 @@ import useAuth from "../hooks/useAuth";
 const RecipesContext = createContext();
 
 export const RecipesModule = ({ children }) => {
-  const { auth, setAuth } = useAuth();
+  const { auth } = useAuth();
   const [recipes, setRecipes] = useState([]);
   const [recipesPageCounter, setRecipesPageCounter] = useState();
   const [recipe, setRecipe] = useState();
   const [emptyData, setEmptyData] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const getRecipes = async (id, page, genre, order, search, sort) => {
+  const getRecipes = async (id, page, genre, order, search, favourite) => {
     try {
       const res = await axios.get(
-        `${id ? `recipes/userRecipes/${id}` : `/recipes`}?${
-          page ? `page=${page}` : ""
-        }&${genre ? `genre=${genre}` : ""}&${order ? `order=${order}` : ""}&${
+        `${id ? `recipes/${id}` : `/recipes`}?${page ? `page=${page}` : ""}&${
+          genre ? `genre=${genre}` : ""
+        }&${order ? `order=${order}` : ""}&${
           search ? `search=${search}` : ""
-        }&${sort ? `sort=${sort}` : ""}`
+        }&${favourite ? `favourite=${favourite}` : ""}`,
+        {
+          headers: {
+            Authorization: `${auth.token}`,
+          },
+        }
       );
       if (res.data.recipes.length === 0) {
         setEmptyData(true);
@@ -35,11 +39,11 @@ export const RecipesModule = ({ children }) => {
       console.log(error);
     }
   };
-  
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const getRecipe = async (id) => {
     try {
-      const res = await axios.get(`/recipes/${id}`);
+      const res = await axios.get(`/recipes/specificRecipe/${id}`);
       setRecipe(res.data);
       return res.data;
     } catch (error) {

@@ -1,6 +1,7 @@
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-// import { useRef, useState, useContext, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
 import useAuth from "../hooks/useAuth";
 
 import Logo from "../images/wasafatnaCircle.png";
@@ -14,15 +15,11 @@ import {
   Form,
   FormControl,
 } from "react-bootstrap";
-import { useEffect, useState } from "react";
 
 const NavbarComp = () => {
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
-
-  // const [UserInfo, setUserInfo] = useState();
-  // console.log(auth);
 
   const UserInfo = (
     <div className="d-flex">

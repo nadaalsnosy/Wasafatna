@@ -9,6 +9,7 @@ import {
   Stack,
   Pagination,
 } from "@mui/material";
+import { Spinner } from "react-bootstrap";
 
 import useAuth from "../hooks/useAuth";
 import IconsSlider from "../components/IconsSlider";
@@ -19,11 +20,11 @@ import FilterContext from "../context/FilterModule";
 import AnimatedPage from "../components/AnimatedPage";
 import RecipeCard from "../components/RecipeCard";
 
-const Recipes = () => {
+const Recipes = (props) => {
   const { id } = useParams();
   const { keyword } = useParams();
-
   const { auth } = useAuth();
+  const { favourite } = props;
 
   const { recipes, emptyData, getRecipes, recipesPageCounter } =
     useContext(RecipesContext);
@@ -31,11 +32,11 @@ const Recipes = () => {
     useContext(FilterContext);
 
   useEffect(() => {
-    getRecipes(id, page, genre, order, keyword);
-  }, [id, page, genre, order, keyword]);
+    getRecipes(id, page, genre, order, keyword, favourite);
+  }, [id, page, genre, order, keyword, favourite, auth]);
 
   useEffect(() => {
-    getRecipes(id, page, genre, order, keyword);
+    getRecipes(id, page, genre, order, keyword, favourite);
   }, []);
 
   return (
@@ -85,7 +86,7 @@ const Recipes = () => {
                   className="w-100"
                   name="genre"
                   value={genre}
-                  onChange={(e) => handleChangeValue(e, id, keyword)}
+                  onChange={(e) => handleChangeValue(e, id, keyword, favourite)}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                 >
@@ -106,7 +107,7 @@ const Recipes = () => {
                   className="w-100"
                   name="order"
                   value={order}
-                  onChange={(e) => handleChangeValue(e, id, keyword)}
+                  onChange={(e) => handleChangeValue(e, id, keyword, favourite)}
                   displayEmpty
                   inputProps={{ "aria-label": "Without label" }}
                 >
@@ -132,16 +133,22 @@ const Recipes = () => {
             </p>
           ) : (
             <>
-              <div className="container d-flex flex-wrap">
-                {recipes?.map((item) => (
-                  <RecipeCard key={item._id} item={item} />
-                ))}
-              </div>
+              {recipes ? (
+                <div className="container d-flex flex-wrap">
+                  {recipes.map((item) => (
+                    <RecipeCard key={item._id} item={item} />
+                  ))}
+                </div>
+              ) : (
+                <div className="d-flex justify-content-center p-3 my-5">
+                  <Spinner animation="border" variant="success" />
+                </div>
+              )}
               <Stack className="container mt-5" spacing={2}>
                 <Pagination
                   count={recipesPageCounter}
                   color="success"
-                  onChange={(e, p) => pageChanges(e, p, id, keyword)}
+                  onChange={(e, p) => pageChanges(e, p, id, keyword, favourite)}
                   // onChange={pageChanges}
                   page={+page || 1}
                 />

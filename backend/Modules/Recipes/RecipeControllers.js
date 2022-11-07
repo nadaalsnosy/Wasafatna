@@ -1,6 +1,83 @@
 const Recipe = require("./RecipeModel");
+const User = require("../Users/UserModel");
 
 const fs = require("fs");
+
+const getRecipes = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 5;
+    const order = parseInt(req.query.order) || -1;
+
+    const sort = req.query.sort || "createdAt";
+    const search = req.query.search || "";
+    const favourite = req.query.favourite || "";
+
+    let genre = req.query.genre || "";
+
+    if (genre === "all") {
+      genre = "";
+    }
+
+    let sortBy = {};
+    sortBy[sort] = order;
+    sortBy["title"] = 1;
+
+    let filterRecipes = [];
+
+    if (id) filterRecipes.push({ createdBy: id });
+
+    if (favourite) {
+      const { id } = req.userPayload;
+      const { userList } = await User.findById(id);
+
+      const listFilter = [];
+      userList.forEach((item) => listFilter.push({ _id: item }));
+      filterRecipes.push({ $or: listFilter });
+    }
+
+    if (search) {
+      filterRecipes.push({
+        $or: [
+          { title: { $regex: search } },
+          { ingredients: { $regex: search } },
+          { instructions: { $regex: search } },
+        ],
+      });
+    }
+
+    if (genre) filterRecipes.push({ genre: genre });
+
+    const findFilter =
+      filterRecipes.length !== 0 ? { $and: filterRecipes } : {};
+
+    const recipesLength = (await Recipe.find(findFilter)).length;
+
+    let recipesPageCounter;
+
+    if (recipesLength % limit === 0) {
+      recipesPageCounter = recipesLength / limit;
+    } else {
+      const rest = recipesLength % limit;
+      recipesPageCounter = (recipesLength - rest + limit) / limit;
+    }
+
+    const recipes = await Recipe.find(findFilter)
+      .limit(limit)
+      .skip(page * limit)
+      .sort(sortBy)
+      .populate({
+        path: "createdBy",
+        select: ["username", "userImg"],
+      });
+    res.send({ recipes, recipesPageCounter });
+  } catch (error) {
+    error.statusCode = 403;
+    next(error);
+  }
+};
 
 const getAll = async (req, res, next) => {
   try {
@@ -318,4 +395,5 @@ module.exports = {
   getOne,
   getAll,
   getUserRecipes,
+  getRecipes,
 };

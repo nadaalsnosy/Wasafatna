@@ -1,4 +1,10 @@
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+
 import dateFormat from "dateformat";
+import axios from "../api/axios";
+import useAuth from "../hooks/useAuth";
+
 import recipeDefultImg from "../images/foodIcon.png";
 import userDefultImg from "../images/userIcon.png";
 
@@ -11,15 +17,12 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Link } from "react-router-dom";
-import axios from "../api/axios";
-import useAuth from "../hooks/useAuth";
 
 const RecipeCard = (props) => {
   let { item } = props;
   const { auth, setAuth } = useAuth();
+  // const { setFavourite } = useContext(FilterContext);
 
   const text = item?.ingredients + item?.instructions;
   const defultText =
@@ -38,7 +41,6 @@ const RecipeCard = (props) => {
           },
         }
       );
-
       setAuth({ ...auth, user: resFiles.data });
     } catch (error) {
       console.log(error);

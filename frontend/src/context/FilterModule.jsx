@@ -1,11 +1,9 @@
-import { useMemo, createContext, useState } from "react";
+import { useMemo, createContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const FilterContext = createContext();
 
 export const FilterModule = ({ children }) => {
-  const [filterRecipes, setFilterRecipes] = useState([]);
-
   const navigate = useNavigate();
   const location = useLocation();
   const query = new URLSearchParams(location.search);
@@ -15,8 +13,7 @@ export const FilterModule = ({ children }) => {
   let order = query.get("order") || "";
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const pageChanges = (e, p, id, keyword) => {
-    console.log(keyword);
+  const pageChanges = (e, p, id, keyword, favourite) => {
     query.set("page", p);
     navigate(
       `${
@@ -25,14 +22,18 @@ export const FilterModule = ({ children }) => {
           : `${
               keyword
                 ? `/search/${keyword}?${query.toString()}`
-                : `/?${query.toString()}`
+                : `${
+                    favourite
+                      ? `/favourite/?${query.toString()}`
+                      : `/?${query.toString()}`
+                  }`
             }`
       }`
     );
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const handleChangeValue = (e, id, keyword) => {
+  const handleChangeValue = (e, id, keyword, favourite) => {
     const val = e.target.value;
     const name = e.target.name;
 
@@ -46,7 +47,11 @@ export const FilterModule = ({ children }) => {
           : `${
               keyword
                 ? `/search/${keyword}?${query.toString()}`
-                : `/?${query.toString()}`
+                : `${
+                    favourite
+                      ? `/favourite/?${query.toString()}`
+                      : `/?${query.toString()}`
+                  }`
             }`
       }`
     );
@@ -54,23 +59,13 @@ export const FilterModule = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({
-      filterRecipes,
-      setFilterRecipes,
       handleChangeValue,
       pageChanges,
       order,
       genre,
       page,
     }),
-    [
-      filterRecipes,
-      setFilterRecipes,
-      handleChangeValue,
-      pageChanges,
-      order,
-      genre,
-      page,
-    ]
+    [handleChangeValue, pageChanges, order, genre, page]
   );
 
   return (
