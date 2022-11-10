@@ -16,6 +16,8 @@ import {
   Avatar,
   IconButton,
   Typography,
+  Rating,
+  Stack,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 
@@ -84,6 +86,15 @@ const RecipeCard = (props) => {
           }
           subheader={dateFormat(item?.createdAt, "dd mmmm yyyy")}
         />
+        <Stack spacing={1}>
+          <Rating
+            name="half-rating-read"
+            className="m-auto mb-3"
+            defaultValue={item?.rate}
+            precision={0.5}
+            readOnly
+          />
+        </Stack>
         <Link to={`/recipe/${item?._id}`}>
           <CardMedia
             component="img"

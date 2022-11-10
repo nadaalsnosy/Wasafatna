@@ -138,15 +138,6 @@ const updateUser = async (req, res, next) => {
     }
     const user = await User.findById(userId);
 
-    // if (userListItem) {
-    //   const exists = user.userList.some(
-    //     (item) => item._id === userListItem._id
-    //   );
-    //   user.userList = exists
-    //     ? user.userList.filter((item) => item._id !== userListItem._id)
-    //     : [...user.userList, userListItem];
-    // }
-
     if (userListItem) {
       const exists = user.userList.some((item) => item == userListItem);
       user.userList = exists

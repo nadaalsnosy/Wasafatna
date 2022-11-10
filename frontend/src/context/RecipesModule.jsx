@@ -23,11 +23,11 @@ export const RecipesModule = ({ children }) => {
         }&${favourite ? `favourite=${favourite}` : ""}`,
         {
           headers: {
-            Authorization: `${auth.token}`,
+            Authorization: `${auth?.token}`,
           },
         }
       );
-      if (res.data.recipes.length === 0) {
+      if (res.data.recipes?.length === 0) {
         setEmptyData(true);
       } else {
         setEmptyData(false);

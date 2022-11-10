@@ -10,6 +10,7 @@ const {
   getAll,
   getUserRecipes,
   getRecipes,
+  addRate,
 } = require("./RecipeControllers");
 
 //get
@@ -21,7 +22,7 @@ recipeRouter.get("/:id", verifyToken, getRecipes);
 // recipeRouter.get("/userRecipes/:id", getUserRecipes);
 recipeRouter.get("/specificRecipe/:id", getOne);
 
-//
+//post
 recipeRouter.post(
   "/",
   upload.fields([
@@ -41,6 +42,7 @@ recipeRouter.post(
   verifyToken,
   addNew
 );
+recipeRouter.post("/addRate/:id", verifyToken, addRate);
 
 //update
 recipeRouter.patch(

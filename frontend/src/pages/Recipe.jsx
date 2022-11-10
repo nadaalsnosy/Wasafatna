@@ -2,7 +2,7 @@ import { useEffect, useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import dateFormat from "dateformat";
 
-import { Button, CardHeader, Avatar } from "@mui/material";
+import { Button, CardHeader, Avatar, Rating, Stack } from "@mui/material";
 
 import useAuth from "../hooks/useAuth";
 import AnimatedPage from "../components/AnimatedPage";
@@ -14,11 +14,17 @@ import userDefultImg from "../images/userIcon.png";
 const Recipe = () => {
   const { auth } = useAuth();
   const { id } = useParams();
-  const { recipe, getRecipe } = useContext(RecipesContext);
+  const { recipe, getRecipe, setRecipe } = useContext(RecipesContext);
 
   useEffect(() => {
     getRecipe(id);
   }, []);
+
+  const handleChangeValue = (e, newVal) => {
+    const { name, value } = e.target;
+    setRecipe((item) => ({ ...item, rate: newVal }));
+  };
+  console.log(recipe);
 
   return (
     <>
@@ -56,6 +62,16 @@ const Recipe = () => {
             title={recipe?.createdBy?.username}
             subheader={dateFormat(recipe?.createdAt, "dd mmmm yyyy")}
           />
+          <Stack spacing={1}>
+            <Rating
+              name="read-only"
+              className="ms-4"
+              defaultValue={recipe?.rate}
+              precision={0.5}
+              size="small"
+              readOnly
+            />
+          </Stack>
           <h1 className="fs-1 text-center mt-4 mb-3 mx-2 text-capitalize text-success">
             {recipe?.title}
           </h1>

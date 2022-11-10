@@ -236,18 +236,16 @@ const updateOne = async (req, res, next) => {
   try {
     const { id } = req.params;
     const recipe = await Recipe.findById(id);
+    const {
+      title,
+      ingredients,
+      instructions,
+      genre,
+      deleteImgs,
+      deleteVideos,
+    } = req.body;
 
     if (req.userPayload.id === recipe.createdBy.toString()) {
-      const {
-        title,
-        rate,
-        ingredients,
-        instructions,
-        genre,
-        deleteImgs,
-        deleteVideos,
-      } = req.body;
-
       if (req.files) {
         const { mainImg, uploadedImgs, uploadedVideos } = req.files;
         if (mainImg) {
@@ -294,6 +292,7 @@ const updateOne = async (req, res, next) => {
           });
         }
       }
+
       if (deleteVideos) {
         if (typeof deleteVideos === "object") {
           deleteVideos.forEach((videoName) => {
@@ -313,25 +312,22 @@ const updateOne = async (req, res, next) => {
           });
         }
       }
-
-      const updatedRecipes = await Recipe.findByIdAndUpdate(
-        id,
-        {
-          title,
-          recipeMainImg: recipe.recipeMainImg,
-          rate,
-          recipeImgs: recipe.recipeImgs,
-          ingredients,
-          instructions,
-          recipeVideos: recipe.recipeVideos,
-          genre,
-        },
-        { new: true }
-      );
-      res.send(updatedRecipes);
-    } else {
-      throw new Error(`You are not allowed to perform this operation!`);
     }
+
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      id,
+      {
+        title,
+        recipeMainImg: recipe.recipeMainImg,
+        recipeImgs: recipe.recipeImgs,
+        ingredients,
+        instructions,
+        recipeVideos: recipe.recipeVideos,
+        genre,
+      },
+      { new: true }
+    );
+    res.send(updatedRecipe);
   } catch (error) {
     error.statusCode = 403;
     next(error);
@@ -388,6 +384,63 @@ const getOne = async (req, res, next) => {
   }
 };
 
+const addRate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const recipe = await Recipe.findById(id);
+
+    const { userRate } = req.body;
+
+    let count = 0;
+    let sum = 0;
+
+    if (userRate !== undefined) {
+      if (recipe.userRateList.length === 0) {
+        recipe.userRateList = [{ id: req.userPayload.id, rate: userRate }];
+        recipe.rateList[userRate]++;
+      } else {
+        const existItem = recipe.userRateList.find(
+          (item) => item.id === req.userPayload.id
+        );
+
+        if (existItem) {
+          if (existItem.rate !== userRate) {
+            recipe.rateList[existItem.rate]--;
+            recipe.rateList[userRate]++;
+            existItem.rate = userRate;
+          }
+        } else {
+          recipe.userRateList = [
+            ...recipe.userRateList,
+            { id: req.userPayload.id, rate: userRate },
+          ];
+          recipe.rateList[userRate]++;
+        }
+      }
+
+      recipe.rateList.forEach(function (value, index) {
+        count += value;
+        sum += value * (index + 1);
+      });
+      recipe.rate = +(sum / count).toFixed(1);
+    }
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      id,
+      {
+        rateList: recipe.rateList,
+        rate: recipe.rate,
+        userRateList: recipe.userRateList,
+      },
+      { new: true }
+    );
+
+    res.send(updatedRecipe);
+  } catch (error) {
+    error.statusCode = 403;
+    next(error);
+  }
+};
+
 module.exports = {
   addNew,
   updateOne,
@@ -396,4 +449,5 @@ module.exports = {
   getAll,
   getUserRecipes,
   getRecipes,
+  addRate,
 };

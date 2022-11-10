@@ -13,6 +13,13 @@ const RecipeSchema = new Schema({
   rate: {
     type: Number,
   },
+  rateList: {
+    // type: Object,
+    type: Array,
+  },
+  userRateList: {
+    type: Array,
+  },
   recipeImgs: {
     type: Array,
   },
